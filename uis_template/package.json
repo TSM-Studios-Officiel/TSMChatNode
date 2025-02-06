@@ -1,0 +1,22 @@
+{
+  "name": "tsm-chatnode_uis-template",
+  "version": "1.0.0",
+  "description": "Template User Instance Server for TSM Chat Node",
+  "license": "CC-BY-4.0",
+  "author": "SaphirDeFeu, TSMStudios",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "compile": "npx tsc && node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "express": "^4.21.2",
+    "socket.io": "4.6.0"
+  }
+}
