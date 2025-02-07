@@ -3,28 +3,31 @@ import { join } from 'node:path';
 import express, { Request, Response, NextFunction } from 'express';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
+import { getTime } from '.';
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-export function createDashboardServer(ROOT: string, PORT: number) {
-  // app.get('/', (req: Request, res: Response) => {
-  //   res.sendFile(join(ROOT, 'dashboard/index.html'));
-  // });
+let console_lines: string[] = [];
+
+export function createDashboardServer(ROOT: string, PORTS: { [index: string]: number }, hostname: string) {
+  console_lines.push(`<span class=green>${getTime()} Node running on: <a href="http://${hostname}:${PORTS.User}" class=light_blue>http://${hostname}:${PORTS.User}/</a></span>`)
 
   app.use('/', express.static('./dashboard'));
 
   io.on('connection', (socket) => {
     debug("Socket connected");
+    socket.emit('console', console_lines.join('\n'));
   });
 
-  server.listen(PORT, () => {
-    console.log(`>> UIS Dashboard on: \x1b]8;;http://localhost:${PORT}\x07http://localhost:${PORT}\x1b]8;;\x07`);
+  server.listen(PORTS.Dashboard, () => {
+    console.log(`>> UIS Dashboard on: \x1b]8;;http://localhost:${PORTS.Dashboard}\x07http://localhost:${PORTS.Dashboard}\x1b]8;;\x07`);
   });
 }
 
 export function broadcastConsole(line: string) {
+  console_lines.push(line);
   io.emit('console', line);
 }
 

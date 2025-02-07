@@ -1,7 +1,8 @@
-const config = require('../config.json.js');
-import { readFileSync } from 'node:fs';
+import { read, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import open from 'open';
+import { jsonc } from 'jsonc';
 import express, { Request, Response, NextFunction } from 'express';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
@@ -15,6 +16,13 @@ const PORTS = {
 };
 
 const ROOT = join(__dirname, '../');
+
+let config;
+try {
+  config = jsonc.parse(readFileSync('./config.jsonc', 'utf-8'));
+} catch (_err) {
+  console.trace(_err);
+}
 
 if (config["Whitelist"]) {
   config["Whitelist-Users"] = readFileSync('whitelist.txt', 'utf-8').split('\n');
@@ -47,21 +55,21 @@ io.on('connection', (socket) => {
 
   socket.on("disconnect", () => {
     const message = `${getTime()} User ${socket.conn.remoteAddress} left`;
-    console.log(message);
     dash.broadcastConsole(message);
   })
 });
 
 server.listen(PORTS.User, hostname, () => {
-  console.log(`>> UIS running on: \x1b]8;;${url}\x07${url}\x1b]8;;\x07`);
   if (hostname == 'localhost') {
-    console.log(`WARNING | UIS running on localhost. Are you connected to the Internet?`);
+    console.log(`WARNING | Node running on localhost. Are you connected to the Internet?`);
   }
 
-  dash.createDashboardServer(ROOT, PORTS.Dashboard);
+
+  dash.createDashboardServer(ROOT, PORTS, hostname);
+  open(`http://localhost:${PORTS.Dashboard}`);
 });
 
-function getTime() {
+export function getTime() {
   const time = new Date(Date.now());
   const format = `[${time.toLocaleString('fr-FR')}]`;
   return format;

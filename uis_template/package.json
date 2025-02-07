@@ -17,6 +17,8 @@
   "dependencies": {
     "@types/express": "^5.0.0",
     "express": "^4.21.2",
+    "jsonc": "^2.0.0",
+    "open": "^10.1.0",
     "socket.io": "^4.8.1"
   }
 }

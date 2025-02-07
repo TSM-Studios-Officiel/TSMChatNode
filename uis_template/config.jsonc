@@ -1,9 +1,4 @@
-/**
- * Configuration file
- *
- * @type {{ "Allow-Central-Networking": boolean; "Use-LAN": boolean; "Allow-Listing": boolean; Whitelist: boolean; "Whitelist-Users": Array<string>; "Max-Concurrent-Users": number; "Allow-Disk-Save": boolean; "Message-Character-Limit": number; "Allow-Media": boolean; "Media-Size-Limit": number; "Ephemeral-Messages": number; }}
- */
-const __CONFIGURATION = {
+{
   // Controls connection to the central server.
   // If disabled, this means that whitelists will not work, and you will not be able to be referenced on the global system,
   // As both of those function using the central database.
@@ -25,7 +20,6 @@ const __CONFIGURATION = {
   // If enabled, only users with usernames present in whitelist.txt will be able to join.
   // Default: false
   "Whitelist": false,
-  "Whitelist-Users": [""], // Appended upon reading of whitelist.txt
 
   // Controls the maximum amount of users the server should be able to handle at once.
   // Default: 20
@@ -51,7 +45,5 @@ const __CONFIGURATION = {
   // Controls the amount of time messages are allowed to persist before being deleted.
   // If set to -1, disables the disappearence of messages after some time entirely.
   // Default: -1
-  "Ephemeral-Messages": -1,
-};
-
-module.exports = __CONFIGURATION;
+  "Ephemeral-Messages": -1
+}
