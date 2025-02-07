@@ -1,3 +1,10 @@
+:root {
+  --primary: #0d0a22;
+  --secondary: white;
+  --ternary: black;
+  --text: white;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -13,8 +20,22 @@ div.full {
   width: 90vw;
   height: 80vh;
   display: grid;
-  grid-template-columns: 30vw 30vw;
+  grid-template-columns: 40vw 40vw;
   grid-template-rows: calc(70vh / 3) calc(70vh / 3) calc(70vh / 3);
-  column-gap: 30vw;
+  column-gap: 10vw;
   row-gap: 5vh;
+}
+
+div.item {
+  background-color: var(--ternary);
+  border: 4px solid var(--secondary);
+  border-radius: 10px;
+  color: var(--text);
+}
+
+div.item.console {
+  grid-row: 1 / -1;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 60%;
+  padding: 2px;
 }

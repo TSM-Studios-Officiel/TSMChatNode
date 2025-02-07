@@ -41,9 +41,15 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 io.on('connection', (socket) => {
-  const connection_message = `User ${socket.conn.remoteAddress} joined`;
+  const connection_message = `${getTime()} User ${socket.conn.remoteAddress} joined`;
   console.log(connection_message);
   dash.broadcastConsole(connection_message);
+
+  socket.on("disconnect", () => {
+    const message = `${getTime()} User ${socket.conn.remoteAddress} left`;
+    console.log(message);
+    dash.broadcastConsole(message);
+  })
 });
 
 server.listen(PORTS.User, hostname, () => {
@@ -54,3 +60,9 @@ server.listen(PORTS.User, hostname, () => {
 
   dash.createDashboardServer(ROOT, PORTS.Dashboard);
 });
+
+function getTime() {
+  const time = new Date(Date.now());
+  const format = `[${time.toLocaleString('fr-FR')}]`;
+  return format;
+}
