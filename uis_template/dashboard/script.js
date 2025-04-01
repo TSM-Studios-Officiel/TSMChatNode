@@ -6,3 +6,12 @@ socket.on("console", (msg) => {
   console.log(msg, cons);
   cons.innerHTML = `${cons.innerHTML}<br/>${msg}`;
 });
+
+socket.on("userupdate", (msg) => {
+  const users = JSON.parse(msg);
+  const div = document.querySelector("div#users");
+  div.innerHTML = "";
+  for (const user of users) {
+    div.innerHTML += `${user.username}<br/>`;
+  }
+});

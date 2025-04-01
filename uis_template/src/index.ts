@@ -1,12 +1,13 @@
-import { read, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import open from 'open';
 import { jsonc } from 'jsonc';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
-import { configurateLAN } from './networking';
+import { configurateLAN as configureLAN } from './networking';
 import dash from './dashboard';
+import { User } from './user';
 
 const PORTS = {
   User: 48025,
@@ -35,7 +36,7 @@ const server = createServer();
 const io = new Server(server);
 
 let hostname: string = 'localhost';
-if (config["Use-LAN"]) hostname = configurateLAN();
+if (config["Use-LAN"]) hostname = configureLAN();
 
 const url = `http://${hostname}:${PORTS.User}`;
 
@@ -43,10 +44,15 @@ io.on('connection', (socket) => {
   const connection_message = `${getTime()} User ${socket.conn.remoteAddress} joined`;
   console.log(connection_message);
   dash.broadcastConsole(connection_message);
+  const user: User = {
+    username: socket.conn.remoteAddress,
+  }
+  dash.userConnected(user);
 
   socket.on("disconnect", () => {
     const message = `${getTime()} User ${socket.conn.remoteAddress} left`;
     dash.broadcastConsole(message);
+    dash.userDisconnected(user);
   })
 });
 
@@ -54,7 +60,6 @@ server.listen(PORTS.User, hostname, () => {
   if (hostname == 'localhost') {
     console.log(`WARNING | Node running on localhost. Are you connected to the Internet?`);
   }
-
 
   dash.createDashboardServer(ROOT, PORTS, hostname);
   open(`http://localhost:${PORTS.Dashboard}`);
