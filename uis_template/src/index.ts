@@ -3,7 +3,6 @@ import { join } from 'node:path';
 
 import open from 'open';
 import { jsonc } from 'jsonc';
-import express, { Request, Response, NextFunction } from 'express';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { configurateLAN } from './networking';
@@ -32,21 +31,13 @@ if (require.main !== module) {
   process.exit(0);
 }
 
-
-const app = express();
-const server = createServer(app);
+const server = createServer();
 const io = new Server(server);
-
-
 
 let hostname: string = 'localhost';
 if (config["Use-LAN"]) hostname = configurateLAN();
 
 const url = `http://${hostname}:${PORTS.User}`;
-
-app.get('/', (req: Request, res: Response) => {
-  res.sendFile(join(ROOT, 'public/index.html'));
-});
 
 io.on('connection', (socket) => {
   const connection_message = `${getTime()} User ${socket.conn.remoteAddress} joined`;
