@@ -59,9 +59,7 @@ io.on('connection', (socket) => {
   })
 });
 
-app.get('/', (req, res) => {
-
-});
+app.use(express.static('public'));
 
 server.listen(PORTS.User, hostname, () => {
   if (hostname == 'localhost' && !config["Debug-Mode"]) {
