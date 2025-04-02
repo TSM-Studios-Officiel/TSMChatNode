@@ -70,3 +70,18 @@ export function getTime() {
   const format = `[${time.toLocaleString('fr-FR')}]`;
   return format;
 }
+
+export interface Config {
+  "Use-LAN": boolean,
+  "Allow-Listing": boolean,
+  "Whitelist": boolean,
+  "Max-Concurrent-Users": number,
+  "Allow-Disk-Save": boolean,
+  "Message-Character-Limit": number,
+  "Allow-Media": boolean,
+  "Media-Size-Limit": number,
+  "Ephemeral-Messages": number,
+  "Debug-Mode": boolean,
+
+  "Whitelist-Users": string[],
+};
