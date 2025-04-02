@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import open from 'open';
+import express from 'express';
 import { jsonc } from 'jsonc';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
@@ -17,11 +18,12 @@ const PORTS = {
 
 const ROOT = join(__dirname, '../');
 
-let config;
+let config: Config;
 try {
   config = jsonc.parse(readFileSync('./config.jsonc', 'utf-8'));
 } catch (_err) {
   console.trace(_err);
+  process.exit(0);
 }
 
 if (config["Whitelist"]) {
@@ -32,7 +34,8 @@ if (require.main !== module) {
   process.exit(0);
 }
 
-const server = createServer();
+const app = express();
+const server = createServer(app);
 const io = new Server(server);
 
 let hostname: string = 'localhost';
@@ -56,8 +59,12 @@ io.on('connection', (socket) => {
   })
 });
 
+app.get('/', (req, res) => {
+
+});
+
 server.listen(PORTS.User, hostname, () => {
-  if (hostname == 'localhost') {
+  if (hostname == 'localhost' && !config["Debug-Mode"]) {
     console.log(`WARNING | Node running on localhost. Are you connected to the Internet?`);
   }
 
