@@ -15,7 +15,7 @@ let console_lines: string[] = [];
 const online_users: User[] = [];
 
 export function createDashboardServer(ROOT: string, PORTS: { [index: string]: number }, hostname: string) {
-  console_lines.push(`<span class=green>${getTime()} Node running on: <a href="http://${hostname}:${PORTS.User}" class=light_blue>http://${hostname}:${PORTS.User}/</a></span>`)
+  console_lines.push(`<span class=green>${getTime()} Node running on: <a href="http://${hostname}:${PORTS.User}/c/" class=light_blue>http://${hostname}:${PORTS.User}/c/</a></span>`)
 
   app.use('/', express.static('./dashboard'));
 
@@ -40,6 +40,10 @@ export function userDisconnected(user: User) {
   io.emit('userupdate', JSON.stringify(online_users));
 }
 
+export function getUsers() {
+  return online_users;
+}
+
 export function broadcastConsole(line: string) {
   console_lines.push(line);
   io.emit('console', line);
@@ -54,4 +58,5 @@ export default {
   userDisconnected,
   broadcastConsole,
   createDashboardServer,
+  getUsers,
 };

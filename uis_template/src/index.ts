@@ -7,7 +7,7 @@ import { jsonc } from 'jsonc';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { configurateLAN as configureLAN } from './networking';
-import dash from './dashboard';
+import dash, { getUsers } from './dashboard';
 import { User } from './user';
 
 const PORTS = {
@@ -39,7 +39,7 @@ const server = createServer(app);
 const io = new Server(server);
 
 let hostname: string = 'localhost';
-if (config["Use-LAN"]) hostname = configureLAN();
+if (config["Use-LAN"] && !config["Debug-Mode"]) hostname = configureLAN();
 
 const url = `http://${hostname}:${PORTS.User}`;
 
@@ -59,7 +59,16 @@ io.on('connection', (socket) => {
   })
 });
 
-app.use(express.static('public'));
+app.get('/s', (req, res) => {
+  const STATUS = {
+    "Is-Alive": true,
+    "Users-Connected": getUsers().length,
+  };
+
+  res.status(200).send(JSON.stringify(STATUS));
+});
+
+app.use('/c/', express.static(join(ROOT, 'public')));
 
 server.listen(PORTS.User, hostname, () => {
   if (hostname == 'localhost' && !config["Debug-Mode"]) {
