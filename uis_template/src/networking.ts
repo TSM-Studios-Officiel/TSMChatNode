@@ -24,7 +24,7 @@ function readNetInterfaces(): Record<string, string[]> {
   return results;
 }
 
-export function configurateLAN(): string {
+export function configureLAN(): string {
   const nets = readNetInterfaces();
   if (!nets) {
     console.error(`No network IP address available! Are you connected via Wi-Fi or Ethernet to a network?`);

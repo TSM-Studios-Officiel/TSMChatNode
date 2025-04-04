@@ -5,8 +5,8 @@ import express from 'express';
 import { jsonc } from 'jsonc';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
-import { configurateLAN as configureLAN } from './networking';
-import dash, { getUsers } from './dashboard';
+import { configureLAN } from './networking';
+import dash from './dashboard';
 import { User } from './user';
 const OPN_PRM = import('open').then((v) => v);
 
@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
 app.get('/s', (req, res) => {
   const STATUS = {
     "Is-Alive": true,
-    "Users-Connected": getUsers().length,
+    "Users-Connected": dash.getUsers().length,
   };
 
   res.status(200).send(JSON.stringify(STATUS));
@@ -71,7 +71,9 @@ app.get('/s', (req, res) => {
 app.use('/c/', express.static(join(ROOT, 'public')));
 
 server.listen(PORTS.User, hostname, () => {
-  if (hostname == 'localhost' && !config["Debug-Mode"]) {
+  if (config["Debug-Mode"]) {
+    console.log("DEBUG | Entering UIS Debug mode.");
+  } else if (hostname == 'localhost') {
     console.log(`WARNING | Node running on localhost. Are you connected to the Internet?`);
   }
 
