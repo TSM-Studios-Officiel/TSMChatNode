@@ -1,7 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import open from 'open';
 import express from 'express';
 import { jsonc } from 'jsonc';
 import { Server } from 'socket.io';
@@ -9,6 +8,7 @@ import { createServer } from 'node:http';
 import { configurateLAN as configureLAN } from './networking';
 import dash, { getUsers } from './dashboard';
 import { User } from './user';
+const OPN_PRM = import('open').then((v) => v);
 
 const PORTS = {
   User: 48025,
@@ -76,7 +76,7 @@ server.listen(PORTS.User, hostname, () => {
   }
 
   dash.createDashboardServer(ROOT, PORTS, hostname);
-  open(`http://localhost:${PORTS.Dashboard}`);
+  OPN_PRM.then((opn) => opn.openApp(`http://localhost:${PORTS.Dashboard}`));
 });
 
 export function getTime() {
