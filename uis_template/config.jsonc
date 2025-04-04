@@ -1,4 +1,14 @@
 {
+  // Customization options
+  "Customization": {
+
+    // The name of the server when displayed on the main page
+    "Server-Name": "User Instance Server",
+
+    // A tiny bit of text underneath the server name when displayed on the main page
+    "Server-Description": "User Instance Server Template"
+  },  
+
   // Controls whether this server instance should only be accessible through LAN networks.
   // If enabled, this means the IP used for connecting will be your network IP.
   // This also implies that Allow-Central-Networking will be automatically disabled if you enable this option
