@@ -22,7 +22,7 @@ html, body {
 div.full {
   position: absolute;
   width: 100vw;
-  min-height: 100vh;
+  min-height: 90vh;
   padding-bottom: 10vh;
   background-color: #000000;
   font-size: 70%;

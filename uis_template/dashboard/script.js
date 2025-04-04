@@ -1,6 +1,6 @@
 const socket = io();
 
-const users = [];
+let users = [];
 
 socket.on("console", (msg) => {
   logConsole(msg);
@@ -59,6 +59,14 @@ function parseCommand(str) {
         }
       }
       socket.emit("stop", time);
+      break;
+    }
+
+    case "listusers": {
+      logConsole(`${users.length} users currently connected.`);
+      for (const user of users) {
+        logConsole(`- ${user.username}`);
+      }
       break;
     }
 
