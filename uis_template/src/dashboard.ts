@@ -15,14 +15,20 @@ let console_lines: string[] = [];
 const online_users: User[] = [];
 
 export function createDashboardServer(ROOT: string, PORTS: { [index: string]: number }, hostname: string) {
-  console_lines.push(`<span class=green>${getTime()} Node running on: <a href="http://${hostname}:${PORTS.User}/c/" class=light_blue>http://${hostname}:${PORTS.User}/c/</a></span>`)
+  console_lines.push(`<span class=violet>${getTime()} Node running on: <a href="http://${hostname}:${PORTS.User}/c/" style='color: white'>http://${hostname}:${PORTS.User}/c/</a></span>`)
 
   app.use('/', express.static('./dashboard'));
 
   io.on('connection', (socket) => {
     debug("Socket connected");
     socket.emit('console', console_lines.join('\n'));
+
+    socket.on('stop', (arg) => {
+      handleStop(arg);
+    });
+
   });
+
 
   server.listen(PORTS.Dashboard, () => {
     console.log(`>> UIS Dashboard on: \x1b]8;;http://localhost:${PORTS.Dashboard}\x07http://localhost:${PORTS.Dashboard}\x1b]8;;\x07`);
@@ -51,6 +57,19 @@ export function broadcastConsole(line: string) {
 
 function debug(...text: any[]) {
   console.log('[[DASHBOARD]] ', ...text);
+}
+
+function handleStop(time: number) {
+  debug("Socket called for server signal interrupt");
+  let i = time;
+  setInterval(() => {
+    if (i > 0) broadcastConsole(`<span class=violet>${getTime()}</span> <span class=red>Server shutting down in ${i} seconds</span>`);
+    if (i == 0) {
+      broadcastConsole(`<span class=violet>${getTime()}</span> <span class=red>Server shutting down NOW!</span>`);
+      setTimeout(() => process.exit(0), 1000);
+    };
+    i--;
+  }, 1000);
 }
 
 export default {

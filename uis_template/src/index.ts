@@ -44,7 +44,7 @@ if (config["Use-LAN"] && !config["Debug-Mode"]) hostname = configureLAN();
 const url = `http://${hostname}:${PORTS.User}`;
 
 io.on('connection', (socket) => {
-  const connection_message = `${getTime()} User ${socket.conn.remoteAddress} joined`;
+  const connection_message = `<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} joined`;
   console.log(connection_message);
   dash.broadcastConsole(connection_message);
   const user: User = {
@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
   dash.userConnected(user);
 
   socket.on("disconnect", () => {
-    const message = `${getTime()} User ${socket.conn.remoteAddress} left`;
+    const message = `<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} left`;
     dash.broadcastConsole(message);
     dash.userDisconnected(user);
   })

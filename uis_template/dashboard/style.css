@@ -11,6 +11,7 @@ html, body {
   width: 100vw;
   height: 100vh;
   color: white;
+  overflow-x: hidden;
 }
 
 * {
@@ -21,14 +22,15 @@ html, body {
 div.full {
   position: absolute;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  padding-bottom: 10vh;
   background-color: #000000;
   font-size: 70%;
 }
 
 div.console {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 input.entry {
