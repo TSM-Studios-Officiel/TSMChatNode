@@ -70,6 +70,16 @@ function parseCommand(str) {
       break;
     }
 
+    case "?":
+    case "help": {
+      logConsole(`Available commands:`);
+      logConsole(
+        `!stop [seconds]: Orders server shut down in [seconds] seconds. Default: 10 seconds`,
+      );
+      logConsole(`!listusers: Lists currently connected users`);
+      break;
+    }
+
     default: {
       logConsole(`<span class=red>Unknown command: ${cmd}</span>`);
       break;
