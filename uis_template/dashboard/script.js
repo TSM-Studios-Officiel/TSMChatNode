@@ -1,6 +1,11 @@
 const socket = io();
 
 let users = [];
+let CONFIG = {};
+
+socket.on("init", (msg) => {
+  CONFIG = JSON.parse(msg);
+});
 
 socket.on("console", (msg) => {
   logConsole(msg);
@@ -63,7 +68,11 @@ function parseCommand(str) {
     }
 
     case "listusers": {
-      logConsole(`${users.length} users currently connected.`);
+      logConsole(
+        `${users.length}/${
+          CONFIG["Max-Concurrent-Users"]
+        } users currently connected.`,
+      );
       for (const user of users) {
         logConsole(`- ${user.username}`);
       }

@@ -17,7 +17,7 @@
 
   // Controls the maximum amount of users the server should be able to handle at once.
   // Default: 20
-  "Max-Concurrent-Users": 20,
+  "Max-Concurrent-Users": 5,
 
   // Controls whether or not the server instance is allowed to make changes on the host's filesystem to store messages and shared media
   // To conserve them between server reboots.

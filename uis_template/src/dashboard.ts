@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import express, { Request, Response, NextFunction } from 'express';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
-import { getTime } from '.';
+import { getTime, Config } from '.';
 import { User } from './user';
 
 const app = express();
@@ -12,15 +12,19 @@ const io = new Server(server);
 
 let console_lines: string[] = [];
 
+let CONFIG: Config;
 const online_users: User[] = [];
 
-export function createDashboardServer(ROOT: string, PORTS: { [index: string]: number }, hostname: string) {
+
+export function createDashboardServer(ROOT: string, PORTS: { [index: string]: number }, hostname: string, _CFG: Config) {
+  CONFIG = _CFG;
   console_lines.push(`<span class=violet>${getTime()} Node running on: <a href="http://${hostname}:${PORTS.User}/c/" style='color: white'>http://${hostname}:${PORTS.User}/c/</a></span>`)
 
   app.use('/', express.static('./dashboard'));
 
   io.on('connection', (socket) => {
     debug("Socket connected");
+    socket.emit("init", JSON.stringify(CONFIG));
     socket.emit('console', console_lines.join('\n'));
 
     socket.on('stop', (arg) => {
@@ -35,9 +39,13 @@ export function createDashboardServer(ROOT: string, PORTS: { [index: string]: nu
   });
 }
 
-export function userConnected(user: User) {
+export function userConnected(user: User): { allowed: boolean, reason: string } {
+  if (online_users.length >= CONFIG["Max-Concurrent-Users"]) return { allowed: false, reason: "User limit reached" };
+
   online_users.push(user);
   io.emit('userupdate', JSON.stringify(online_users));
+
+  return { allowed: true, reason: "" };
 }
 
 export function userDisconnected(user: User) {

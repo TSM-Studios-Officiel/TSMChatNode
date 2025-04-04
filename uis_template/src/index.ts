@@ -50,7 +50,12 @@ io.on('connection', (socket) => {
   const user: User = {
     username: socket.conn.remoteAddress,
   }
-  dash.userConnected(user);
+  const { allowed, reason } = dash.userConnected(user);
+  if (!allowed) {
+    dash.broadcastConsole(`<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} was kicked out due to ${reason}`);
+    socket.disconnect();
+    return;
+  }
 
   socket.on("disconnect", () => {
     const message = `<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} left`;
@@ -77,7 +82,7 @@ server.listen(PORTS.User, hostname, () => {
     console.log(`WARNING | Node running on localhost. Are you connected to the Internet?`);
   }
 
-  dash.createDashboardServer(ROOT, PORTS, hostname);
+  dash.createDashboardServer(ROOT, PORTS, hostname, config);
   OPN_PRM.then((opn) => opn.openApp(`http://localhost:${PORTS.Dashboard}`));
 });
 
