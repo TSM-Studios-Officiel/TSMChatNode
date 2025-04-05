@@ -8,6 +8,7 @@ import { createServer } from 'node:http';
 import { configureLAN } from './networking';
 import dash from './dashboard';
 import { User } from './user';
+import { checkForUpdate } from './update';
 const OPN_PRM = import('open').then((v) => v);
 
 const PORTS = {
@@ -17,6 +18,8 @@ const PORTS = {
 };
 
 const ROOT = join(__dirname, '../');
+
+const CURRENT_INSTANCE_DATA: InstData = JSON.parse(readFileSync('./data.json', "utf-8"));
 
 let config: Config;
 try {
@@ -83,6 +86,8 @@ server.listen(PORTS.User, hostname, () => {
   }
 
   dash.createDashboardServer(ROOT, PORTS, hostname, config);
+  checkForUpdate(config["Debug-Mode"], CURRENT_INSTANCE_DATA.version);
+
   OPN_PRM.then((opn) => opn.openApp(`http://localhost:${PORTS.Dashboard}`));
 });
 
@@ -106,3 +111,7 @@ export interface Config {
 
   "Whitelist-Users": string[],
 };
+
+export interface InstData {
+  "version": string,
+}

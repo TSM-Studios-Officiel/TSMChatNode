@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@types/express": "^5.0.0",
+    "axios": "^1.8.4",
     "express": "^4.21.2",
     "jsonc": "^2.0.0",
     "open": "^10.1.0",
