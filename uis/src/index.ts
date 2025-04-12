@@ -21,6 +21,8 @@ const ROOT = join(__dirname, '../');
 
 const CURRENT_INSTANCE_DATA: InstData = JSON.parse(readFileSync('./data.json', "utf-8"));
 
+const messages: { Time: number, Author: string, Text: string, Attachments?: string }[] = [];
+
 let config: Config;
 try {
   config = jsonc.parse(readFileSync('./config.jsonc', 'utf-8'));
@@ -60,28 +62,31 @@ io.on('connection', (socket) => {
   }
 
   socket.emit("id", socket.conn.remoteAddress);
+  socket.emit("msg", JSON.stringify(messages));
 
   socket.on("disconnect", () => {
     const message = `<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} left`;
     dash.broadcastConsole(message);
     dash.userDisconnected(user);
   })
-});
 
-const messages: { Time: number, Author: string, Text: string, Attachments?: string }[] = [];
+  socket.on('msg/plain', (_data) => {
+    const data = JSON.parse(_data);
+    if (data["Authorization"] == "") return;
 
-io.on('msg/plain', (data) => {
-  if (data["Authorization"] == "") return;
+    let file;
+    const author_id = data["Authorization"];
+    messages.push({ Time: Date.now(), Author: author_id, Text: data.Text });
+    if (config["Allow-Disk-Save"] == true) {
+      file = join(ROOT, 'store/messages.json');
+      writeFileSync(file, JSON.stringify(messages));
+    }
 
-  let file;
-  const author_id = data["Author"];
-  messages.push({ Time: Date.now(), Author: author_id, Text: data.Text, Attachments: data.Attachments });
-  if (config["Allow-Disk-Save"] == true) {
-    file = join(ROOT, 'store/messages.json');
-    writeFileSync(file, JSON.stringify(messages));
-  }
+    dash.broadcastConsole(`<span class=violet>${getTime()}</span> [${author_id}]: ${data.Text}`);
 
-  io.emit('msg', messages[messages.length - 1]);
+    socket.emit('msg', messages[messages.length - 1]);
+    socket.broadcast.emit('msg', messages[messages.length - 1]);
+  });
 });
 
 app.get('/s', (req, res) => {
@@ -92,8 +97,6 @@ app.get('/s', (req, res) => {
 
   res.status(200).send(JSON.stringify(STATUS));
 });
-
-app.use('/c/', express.static(join(ROOT, 'public')));
 
 server.listen(PORTS.User, hostname, () => {
   if (config["Debug-Mode"]) {

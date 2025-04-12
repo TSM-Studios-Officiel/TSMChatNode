@@ -1,0 +1,53 @@
+:root {
+  --primary: black;
+  --secondary: white;
+  --ternary: black;
+  --text: white;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  color: white;
+  overflow-x: hidden;
+}
+
+* {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+
+div.full {
+  position: absolute;
+  width: 100vw;
+  min-height: 90vh;
+  padding-bottom: 10vh;
+  background-color: #000000;
+  font-size: 70%;
+}
+
+div.console {
+  display: flex;
+  flex-direction: column;
+}
+
+input.entry {
+  position: fixed;
+  bottom: 2vh;
+  left: 2vw;
+  width: 96vw;
+  height: 6vh;
+
+  background-color: #222;
+  border-radius: 8px;
+
+  border: 1px solid #555;
+
+  color: white;
+}
+
+input.entry:focus {
+  outline: none;
+}

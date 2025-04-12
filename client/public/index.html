@@ -4,11 +4,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChatNode Client</title>
+  <title>TSMChatNode Menu</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./colors.css">
 </head>
 
 <body>
-  <p>TSMChatNode Client</p>
+
+  <div class="full">
+    <div class="console" id="console">
+      <span class="blue">Use !help for a list of available commands</span>
+      <span class="blue">Use !connect &lt;ip&gt; to connect to an instance</span>
+    </div>
+  </div>
+
+  <input type="text" class="entry" placeholder="> _"></input>
+
+  <script src="./script.js" defer></script>
 </body>
 
 </html>

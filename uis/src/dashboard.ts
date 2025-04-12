@@ -16,7 +16,7 @@ const online_users: User[] = [];
 
 export function createDashboardServer(ROOT: string, PORTS: { [index: string]: number }, hostname: string, _CFG: Config) {
   CONFIG = _CFG;
-  console_lines.push(`<span class=violet>${getTime()} Node running on: <a href="http://${hostname}:${PORTS.User}/c/" style='color: white'>http://${hostname}:${PORTS.User}/c/</a></span>`)
+  console_lines.push(`<span class=violet>${getTime()} Node running on: <a href="http://${hostname}:${PORTS.User}/" style='color: white'>http://${hostname}:${PORTS.User}/</a></span>`)
 
   app.use('/', express.static('./dashboard'));
 
