@@ -6,6 +6,10 @@
   "author": "SaphirDeFeu, TSMStudios",
   "type": "commonjs",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "github.com/TSM-Studios-Officiel/TSMChatNode"
+  },
   "scripts": {
     "start": "node dist/index.js",
     "compile": "npx tsc && node dist/index.js"
