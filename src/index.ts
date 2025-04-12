@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import express from 'express';
@@ -48,7 +48,6 @@ const url = `http://${hostname}:${PORTS.User}`;
 
 io.on('connection', (socket) => {
   const connection_message = `<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} joined`;
-  console.log(connection_message);
   dash.broadcastConsole(connection_message);
   const user: User = {
     username: socket.conn.remoteAddress,
@@ -60,11 +59,29 @@ io.on('connection', (socket) => {
     return;
   }
 
+  socket.emit("id", socket.conn.remoteAddress);
+
   socket.on("disconnect", () => {
     const message = `<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} left`;
     dash.broadcastConsole(message);
     dash.userDisconnected(user);
   })
+});
+
+const messages: { Time: number, Author: string, Text: string, Attachments?: string }[] = [];
+
+io.on('msg/plain', (data) => {
+  if (data["Authorization"] == "") return;
+
+  let file;
+  const author_id = data["Author"];
+  messages.push({ Time: Date.now(), Author: author_id, Text: data.Text, Attachments: data.Attachments });
+  if (config["Allow-Disk-Save"] == true) {
+    file = join(ROOT, 'store/messages.json');
+    writeFileSync(file, JSON.stringify(messages));
+  }
+
+  io.emit('msg', messages[messages.length - 1]);
 });
 
 app.get('/s', (req, res) => {
@@ -94,6 +111,12 @@ server.listen(PORTS.User, hostname, () => {
 export function getTime() {
   const time = new Date(Date.now());
   const format = `[${time.toLocaleString('fr-FR')}]`;
+  return format;
+}
+
+export function getDate() {
+  const time = new Date(Date.now());
+  const format = `${time.getDay()}-${time.getMonth()}-${time.getFullYear()}`;
   return format;
 }
 

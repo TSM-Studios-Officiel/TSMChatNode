@@ -1,6 +1,4 @@
-import { join } from 'node:path';
-
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { getTime, Config } from '.';
