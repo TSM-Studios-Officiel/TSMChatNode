@@ -1,13 +1,18 @@
 import { contextBridge, ipcRenderer } from "electron";
 
+let connection_timeout: NodeJS.Timeout;
+
 contextBridge.exposeInMainWorld('clientapi', {
   connect: async (hostname: string) => {
     const res = await ipcRenderer.invoke('client/connect', [hostname]);
+    connection_timeout = setTimeout(() => {
+      logConsole(`<span class=red>Could not connect to ${hostname}</span>`)
+      ipcRenderer.invoke('client/disconnect');
+    }, 5000);
     return res;
   },
   disconnect: async () => {
-    const res = await ipcRenderer.invoke('client/disconnect');
-    return res;
+    await ipcRenderer.invoke('client/disconnect');
   },
 
   getHostname: async () => {
@@ -42,6 +47,11 @@ window.addEventListener("DOMContentLoaded", () => {
       const str = `<span class=violet>[${time_sent}]</span> [${author}]: ${text}`;
       logConsole(str);
     }
+  })
+
+  ipcRenderer.on("server/connected", (_, data) => {
+    clearTimeout(connection_timeout);
+    logConsole(`<span class=green>Connected to ${data}</span>`);
   })
 })
 

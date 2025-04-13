@@ -76,7 +76,7 @@ io.on('connection', (socket) => {
 
     let file;
     const author_id = data["Authorization"];
-    messages.push({ Time: Date.now(), Author: author_id, Text: data.Text });
+    messages.push({ Time: Date.now(), Author: author_id, Text: data.Text.replace(/>/g, '\\>').replace(/</g, '\\<') });
     if (config["Allow-Disk-Save"] == true) {
       file = join(ROOT, 'store/messages.json');
       writeFileSync(file, JSON.stringify(messages));

@@ -1,35 +1,35 @@
 import { io, Socket } from "socket.io-client";
-import { receiveMessages } from ".";
+import { affirmConnection, receiveMessages } from ".";
 
-let socket: Socket;
+let socket: Socket | undefined;
 
 export const STATUS = {
   host: "",
   id: "",
 };
 
-export function connect(hostname: string): boolean {
+export function connect(hostname: string) {
   socket = io(`http://${hostname}:48025/`);
   STATUS.host = hostname;
 
   socket.on("id", (data: string) => {
     STATUS.id = data;
+    affirmConnection(STATUS.host);
   });
 
   socket.on("msg", (data: string) => {
     receiveMessages(data);
   });
-
-  return true;
 }
 
-export function disconnect(): boolean {
+export function disconnect() {
+  if (!socket) return;
   socket.disconnect();
-
-  return true;
+  socket = undefined;
 }
 
 export function send(contents: string) {
+  if (!socket) return;
   socket.emit('msg/plain',
     JSON.stringify({
       "Authorization": STATUS.id,

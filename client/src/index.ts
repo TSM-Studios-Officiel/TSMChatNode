@@ -18,11 +18,11 @@ const createWindow = () => {
 }
 
 ipcMain.handle('client/connect', async (event, args) => {
-  return client_socket.connect(args[0]);
+  client_socket.connect(args[0]);
 });
 
 ipcMain.handle('client/disconnect', async (event, args) => {
-  return client_socket.disconnect();
+  client_socket.disconnect();
 });
 
 ipcMain.handle('client/status', async (event, args) => {
@@ -36,6 +36,10 @@ ipcMain.on('client/send', async (event, args) => {
 export function receiveMessages(data: string) {
   console.log(data);
   mainWindow.webContents.send('server/message', data);
+}
+
+export function affirmConnection(data: string) {
+  mainWindow.webContents.send('server/connected', data);
 }
 
 app.whenReady().then(() => {
