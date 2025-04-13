@@ -48,7 +48,6 @@ async function parseCommand(str) {
       hostname = argv[0];
 
       const res = await clientapi.connect(hostname);
-      console.log(res);
       if (res == true) {
         logConsole(`<span class=green>Connected to ${hostname}</span>`);
       } else {
@@ -59,10 +58,10 @@ async function parseCommand(str) {
 
     case "disconnect": {
       const res = await clientapi.disconnect();
-      console.log(res);
+      const hostname = await clientapi.getHostname();
       if (res == true) {
         logConsole(
-          `<span class=green>Disconnected from ${clientapi.getHostname()}</span>`,
+          `<span class=green>Disconnected from ${hostname}</span>`,
         );
       } else {
         logConsole(`<span class=red>Could not disconnect</span>`);

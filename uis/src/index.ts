@@ -84,8 +84,8 @@ io.on('connection', (socket) => {
 
     dash.broadcastConsole(`<span class=violet>${getTime()}</span> [${author_id}]: ${data.Text}`);
 
-    socket.emit('msg', messages[messages.length - 1]);
-    socket.broadcast.emit('msg', messages[messages.length - 1]);
+    socket.emit('msg', JSON.stringify([messages[messages.length - 1]]));
+    socket.broadcast.emit('msg', JSON.stringify([messages[messages.length - 1]]));
   });
 });
 

@@ -3,9 +3,10 @@ import { join } from 'node:path';
 import client_socket from './socket';
 
 const ROOT = join(__dirname, "..");
+let mainWindow: BrowserWindow;
 
 const createWindow = () => {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -13,7 +14,7 @@ const createWindow = () => {
     },
   });
 
-  win.loadFile('public/index.html');
+  mainWindow.loadFile('public/index.html');
 }
 
 ipcMain.handle('client/connect', async (event, args) => {
@@ -32,8 +33,9 @@ ipcMain.on('client/send', async (event, args) => {
   return client_socket.send(args);
 })
 
-export function receiveMessages(data: any) {
-  ipcMain.emit('server/message', data);
+export function receiveMessages(data: string) {
+  console.log(data);
+  mainWindow.webContents.send('server/message', data);
 }
 
 app.whenReady().then(() => {

@@ -12,11 +12,11 @@ export function connect(hostname: string): boolean {
   socket = io(`http://${hostname}:48025/`);
   STATUS.host = hostname;
 
-  socket.on("id", (data) => {
+  socket.on("id", (data: string) => {
     STATUS.id = data;
   });
 
-  socket.on("msg", (data) => {
+  socket.on("msg", (data: string) => {
     receiveMessages(data);
   });
 

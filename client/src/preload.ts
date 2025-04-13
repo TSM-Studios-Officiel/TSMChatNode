@@ -21,12 +21,29 @@ contextBridge.exposeInMainWorld('clientapi', {
 
   log: (doc: string) => {
     logConsole(doc);
-  }
+  },
 });
 
-ipcRenderer.on('server/message', async (event, args) => {
-  logConsole(args);
-});
+window.addEventListener("DOMContentLoaded", () => {
+  ipcRenderer.on("server/message", (_, _data) => {
+    const data = JSON.parse(_data);
+    let exploitableData: any[];
+    if (typeof data != typeof []) {
+      exploitableData = [data];
+    } else {
+      exploitableData = data;
+    }
+
+    for (const item of exploitableData) {
+      const time_sent = new Date(item.Time).toLocaleString();
+      const author = item.Author;
+      const text = item.Text;
+
+      const str = `<span class=violet>[${time_sent}]</span> [${author}]: ${text}`;
+      logConsole(str);
+    }
+  })
+})
 
 function logConsole(doc: string) {
   const lines = doc.split("\n");
@@ -36,6 +53,4 @@ function logConsole(doc: string) {
   doc = lines.join("");
   const cons = document.querySelector("div#console") ?? document.createElement("div#console");
   cons.innerHTML = `${cons.innerHTML}${doc}`;
-
-  return
 }
