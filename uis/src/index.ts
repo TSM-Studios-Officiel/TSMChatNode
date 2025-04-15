@@ -7,6 +7,7 @@ import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { configureLAN } from './networking';
 import dash from './dashboard';
+import central from './central';
 import { User } from './user';
 import { checkForUpdate } from './update';
 const OPN_PRM = import('open').then((v) => v);
@@ -22,6 +23,8 @@ const ROOT = join(__dirname, '../');
 const CURRENT_INSTANCE_DATA: InstData = JSON.parse(readFileSync('./data.json', "utf-8"));
 
 const messages: { Time: number, Author: string, Text: string, Attachments?: string }[] = [];
+
+export const CENTRAL_SERVER_URL = `http://localhost:${PORTS.Central}`;
 
 let config: Config;
 try {
@@ -98,12 +101,14 @@ app.get('/s', (req, res) => {
   res.status(200).send(JSON.stringify(STATUS));
 });
 
-server.listen(PORTS.User, hostname, () => {
+server.listen(PORTS.User, hostname, async () => {
   if (config["Debug-Mode"]) {
     console.log("DEBUG | Entering UIS Debug mode.");
   } else if (hostname == 'localhost') {
     console.log(`WARNING | Node running on localhost. Are you connected to the Internet?`);
   }
+
+  if (!await central.register(config, hostname)) return;
 
   dash.createDashboardServer(ROOT, PORTS, hostname, config);
   checkForUpdate(config["Debug-Mode"], CURRENT_INSTANCE_DATA.version);
@@ -134,6 +139,11 @@ export interface Config {
   "Media-Size-Limit": number,
   "Ephemeral-Messages": number,
   "Debug-Mode": boolean,
+
+  "Customization": {
+    "Server-Name": string,
+    "Server-Description": string,
+  }
 
   "Whitelist-Users": string[],
 };

@@ -19,10 +19,12 @@ Clone the project
 git clone https://github.com/TSM-Studios-Officiel/TSMChatNode
 ```
 
-Go to the project directory
+Go to the project directory and into the client or UIS directory
 
 ```bash
 cd TSMChatNode
+# cd client
+# cd uis
 ```
 
 Install dependencies
