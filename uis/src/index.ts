@@ -10,6 +10,7 @@ import dash from './dashboard';
 import central from './central';
 import { User } from './user';
 import { checkForUpdate } from './update';
+import { generateKeypair, generateSharedKey } from './encryption';
 const OPN_PRM = import('open').then((v) => v);
 
 const PORTS = {
@@ -21,6 +22,12 @@ const PORTS = {
 const ROOT = join(__dirname, '../');
 
 const CURRENT_INSTANCE_DATA: InstData = JSON.parse(readFileSync('./data.json', "utf-8"));
+
+// Generate keys for symmetric and asymmetric encryption
+// Asymmetric encryption will be used by connecting clients requesting data from the server
+// Symmetric encryption will be used by connected clients for message sending and receiving
+generateKeypair(2048);
+generateSharedKey(32, 16);
 
 const messages: { Time: number, Author: string, Text: string, Attachments?: string }[] = [];
 

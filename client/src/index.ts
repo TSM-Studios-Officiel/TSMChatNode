@@ -1,11 +1,16 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'node:path';
 import client_socket from './socket';
+import { generateKeypair } from './encryption';
 
 const ROOT = join(__dirname, "..");
 let mainWindow: BrowserWindow;
 
+let SESSION_ID = "";
+
 const createWindow = () => {
+  prereqs();
+
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -45,3 +50,11 @@ export function affirmConnection(data: string) {
 app.whenReady().then(() => {
   createWindow();
 });
+
+/**
+ * The Prerequisite functions, ran on startup but before any window is displayed.
+ */
+function prereqs() {
+  // Generate unique session encryption keys
+  generateKeypair(2048);
+}

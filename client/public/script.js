@@ -60,6 +60,8 @@ async function parseCommand(str) {
       break;
     }
 
+    // TODO: Make a LOGIN and SIGNUP command that POST information to the central server and retrieves and saves a SESSION ID.
+
     case "?":
     case "help": {
       logConsole(`Available commands:`);
