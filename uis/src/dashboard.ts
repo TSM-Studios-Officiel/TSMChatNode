@@ -31,7 +31,6 @@ export function createDashboardServer(ROOT: string, PORTS: { [index: string]: nu
 
   });
 
-
   server.listen(PORTS.Dashboard, () => {
     console.log(`>> UIS Dashboard on: \x1b]8;;http://localhost:${PORTS.Dashboard}\x07http://localhost:${PORTS.Dashboard}\x1b]8;;\x07`);
   });
