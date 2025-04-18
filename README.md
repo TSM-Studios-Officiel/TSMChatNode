@@ -48,8 +48,8 @@ npm start
 
 ## Authors
 
-- [@SaphirDeFeu](https://www.github.com/SaphirDeFeu)
-
+- [@SaphirDeFeu](https://www.github.com/SaphirDeFeu) - Lead developer
+- [@em-exe](https://github.com/em-exe) - Creative designer & Client-side developer
 
 ## License
 
