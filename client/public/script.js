@@ -92,3 +92,22 @@ function openmenu() {
   document.querySelector("div.menu").classList.remove('menuclose');
   document.documentElement.style.setProperty("--menu-width", "20vw");
 }
+
+function connectserver() {
+  // ajoute ton code la car jsp tu veux faire quoi bg
+
+}
+
+function createserver() {
+  // ajoute ton code la car jsp tu veux faire quoi bg
+
+
+}
+
+function profile() {
+  // ouvrira une page dans le client-side pour gerer son profile utilisateur
+}
+
+function registerserver() {
+  // pourquoi pas ajouter une page qui permettra de voir la liste des serveurs que l'utilisateur à décider de sauvegarder
+}

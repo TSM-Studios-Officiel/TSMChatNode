@@ -34,6 +34,7 @@ div.full {
 div.console {
   display: flex;
   flex-direction: column;
+  margin-left: 2%;
 }
 
 input.entry {
@@ -59,13 +60,97 @@ input.entry:focus {
 div.menu {
   display: flex;
   position: fixed;
+  flex-direction: column;
+
   width: 20vw;
   height: 100vh;
   left: 0vw;
+
   background-color: #222;
   border-right: 3px solid white;
   z-index: 100;
+
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis;
   
+}
+
+div.submenu {
+  display: flex;
+  flex-direction: column;
+}
+
+div.submenu2 {
+  display: flex;
+  padding: 1%;
+  margin-right: 5vw;
+  margin-right: auto;
+  margin: 1%;
+}
+
+button.register {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 5vw;
+  height: 4vh;
+  border: 2px solid white;
+  background-color: rgb(50, 50, 50);
+  border-radius: 3px;
+  color: white;
+
+  padding: 1%;
+  margin-right: 5vw;
+  margin-right: auto;
+  margin: 1%;
+
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis;
+}
+
+button.register:hover {
+  cursor: pointer;
+  background-color: #212121;
+}
+
+button.register:active {
+  cursor: pointer;
+  background-color: #000000;
+}
+
+button.menubutton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 10vw;
+  height: 4vh;
+  border: 1px solid white;
+  background-color: rgb(50, 50, 50);
+  border-radius: 3px;
+  color: white;
+
+  padding: 1%;
+  margin: 1%;
+  margin-top: 2vh;
+  margin-right: auto;
+
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis;
+}
+
+button.menubutton:hover {
+  cursor: pointer;
+  background-color: #212121;
+}
+
+button.menubutton:active {
+  cursor: pointer;
+  background-color: #000000;
 }
 
 button.closemenu {
