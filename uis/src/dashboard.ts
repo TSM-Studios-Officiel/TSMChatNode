@@ -37,7 +37,8 @@ export function createDashboardServer(ROOT: string, PORTS: { [index: string]: nu
   });
 }
 
-export function userConnected(user: User): { allowed: boolean, reason: string } {
+// Checks for any reason to disconnect a user
+export function authorizeConnection(user: User): { allowed: boolean, reason: string } {
   if (online_users.length >= CONFIG["Max-Concurrent-Users"]) return { allowed: false, reason: "User limit reached" };
 
   online_users.push(user);
@@ -79,7 +80,7 @@ function handleStop(time: number) {
 }
 
 export default {
-  userConnected,
+  userConnected: authorizeConnection,
   userDisconnected,
   broadcastConsole,
   createDashboardServer,

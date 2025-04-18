@@ -16,6 +16,7 @@ export async function register(config: Config, hostname: string): Promise<boolea
     });
     return true;
   } catch (_) {
+    // If connection times out
     console.log(`Could not connect to the Central Server.`);
   }
 

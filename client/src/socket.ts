@@ -25,6 +25,8 @@ export function connect(hostname: string) {
 export function disconnect() {
   if (!socket) return;
   socket.disconnect();
+  STATUS.host = "";
+  STATUS.id = "";
   socket = undefined;
 }
 
