@@ -81,3 +81,14 @@ async function parseCommand(str) {
 function logConsole(doc) {
   clientapi.log(doc);
 }
+
+function closemenu() {
+  document.querySelector("div.menu").classList.add('menuclose');
+  document.documentElement.style.setProperty("--menu-width", "0vw");
+
+}
+
+function openmenu() {
+  document.querySelector("div.menu").classList.remove('menuclose');
+  document.documentElement.style.setProperty("--menu-width", "20vw");
+}

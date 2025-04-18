@@ -3,6 +3,7 @@
   --secondary: white;
   --ternary: black;
   --text: white;
+  --menu-width: 20vw;
 }
 
 html, body {
@@ -21,11 +22,13 @@ html, body {
 
 div.full {
   position: absolute;
-  width: 100vw;
+  width: calc(100vw - var(--menu-width));
+  left: var(--menu-width);
   min-height: 90vh;
   padding-bottom: 10vh;
   background-color: #000000;
   font-size: 70%;
+
 }
 
 div.console {
@@ -36,9 +39,10 @@ div.console {
 input.entry {
   position: fixed;
   bottom: 2vh;
-  left: 2vw;
-  width: 96vw;
+  width: calc(96vw - var(--menu-width));
+  left: calc(2vw + var(--menu-width));
   height: 6vh;
+  
 
   background-color: #222;
   border-radius: 8px;
@@ -50,4 +54,52 @@ input.entry {
 
 input.entry:focus {
   outline: none;
+}
+
+div.menu {
+  display: flex;
+  position: fixed;
+  width: 20vw;
+  height: 100vh;
+  left: 0vw;
+  background-color: #222;
+  border-right: 3px solid white;
+  z-index: 100;
+  
+}
+
+button.closemenu {
+  margin-left: auto; 
+  height: 3vh;
+  background: none;
+  border: none;
+  font-family: Helvetica;
+  color: white;
+}
+
+button.closemenu:hover {
+  cursor: pointer;
+}
+button.openmenu {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  margin-right: auto;
+  height: 3vh;
+  background: gray;
+  align-items: center;
+  border: none;
+  font-family: Helvetica;
+  color: white;
+  bottom: 4vh;
+  z-index: 50;
+ 
+}
+
+button.openmenu:hover {
+  cursor: pointer;
+}
+
+div.menuclose {
+  translate: -500px 0;
 }
