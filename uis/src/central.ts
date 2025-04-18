@@ -3,16 +3,21 @@ import axios from "axios";
 
 export async function register(config: Config, hostname: string): Promise<boolean> {
   try {
+    const data = {
+      hostname,
+      name: config["Customization"]["Server-Name"],
+      description: config["Customization"]["Server-Description"],
+      whitelisted: config["Whitelist"],
+      allowlist: config["Allow-Listing"],
+    };
+
     await axios({
       method: 'post',
       url: CENTRAL_SERVER_URL + '/register',
-      data: {
-        hostname,
-        name: config["Customization"]["Server-Name"],
-        description: config["Customization"]["Server-Description"],
-        whitelisted: config["Whitelist"],
-        allowlist: config["Allow-Listing"],
+      headers: {
+        'Content-Type': 'text/plain'
       },
+      data: JSON.stringify(data),
     });
     return true;
   } catch (_) {
