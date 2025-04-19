@@ -16,6 +16,7 @@
       <span class="blue">Use !help for a list of available commands</span>
       <span class="blue">Use !connect &lt;ip&gt; to connect to an instance</span>
     </div>
+    <input type="text" class="entry" placeholder="> _"></input>
   </div>
 
   <div class="menu">
@@ -26,17 +27,14 @@
       <button class="closemenu" onclick="closemenu()">X</button>
     </div>
     <div class="submenu">
-      <p>____________________________________________</p>
-      <button class="menubutton" onclick="connectserver()">Connect to server</button>
-      <button class="menubutton" onclick="createserver()">Create server</button>
-      <button class="menubutton" onclick="registerserver()">Register server</button>
-      <button class="menubutton" onclick="profile()">Profile</button>
-      
+      <button class="menubutton" onclick="connectToServer()">Connect to Server</button>
+      <button class="menubutton" onclick="createServer()">Create Server</button>
+      <button class="menubutton" onclick="seeRegisteredServer()">See Registered Server</button>
+      <button class="menubutton" onclick="openProfile()">Profile</button>
     </div>
   </div>
 
   <button class="openmenu" onclick="openmenu()">&gt;</button>
-  <input type="text" class="entry" placeholder="> _"></input>
 
   <script src="./script.js" defer></script>
 </body>

@@ -83,31 +83,38 @@ function logConsole(doc) {
 }
 
 function closemenu() {
-  document.querySelector("div.menu").classList.add('menuclose');
-  document.documentElement.style.setProperty("--menu-width", "0vw");
-
+  document.querySelector("div.menu").classList.remove("menuopened");
+  document.querySelector("div.full").classList.remove("full_closed");
+  document.querySelector("div.menu").classList.add("menuclosed");
+  document.querySelector("div.full").classList.add("full_opened");
 }
 
 function openmenu() {
-  document.querySelector("div.menu").classList.remove('menuclose');
-  document.documentElement.style.setProperty("--menu-width", "20vw");
+  document.querySelector("div.menu").classList.add("menuopened");
+  document.querySelector("div.full").classList.add("full_closed");
+  document.querySelector("div.menu").classList.remove("menuclosed");
+  document.querySelector("div.full").classList.remove("full_opened");
 }
 
-function connectserver() {
-  // ajoute ton code la car jsp tu veux faire quoi bg
-
+function connectToServer() {
+  // TODO: Ré-écrire le code qui permet la connection à un serveur.
 }
 
-function createserver() {
-  // ajoute ton code la car jsp tu veux faire quoi bg
-
-
+function createServer() {
+  window.open(
+    "https://github.com/TSM-Studios-Officiel/TSMChatNode/releases",
+    "_blank",
+  );
 }
 
-function profile() {
-  // ouvrira une page dans le client-side pour gerer son profile utilisateur
+function openProfile() {
+  // TODO: Faire une page profile.html
+  const profileWindow = window.open("profile.html", "_blank");
+  profileWindow.focus();
 }
 
-function registerserver() {
-  // pourquoi pas ajouter une page qui permettra de voir la liste des serveurs que l'utilisateur à décider de sauvegarder
+function seeRegisteredServer() {
+  // TODO: Faire une page registered.html
+  const registrationWindow = window.open("registered.html", "_blank");
+  registrationWindow.focus();
 }
