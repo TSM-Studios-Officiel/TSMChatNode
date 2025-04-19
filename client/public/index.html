@@ -22,8 +22,8 @@
   <div class="menu">
     <div class="submenu2">
       <img src="assets/img/tsmstudios.png" width="40px" height="40px" class="register" style="padding-right: 1vw;">
-      <button class="register">Log in</button>
-      <button class="register">Sign up</button>
+      <button class="register" onclick="openDialog(0)">Sign In</button>
+      <button class="register" onclick="openDialog(1)">Sign Up</button>
       <button class="closemenu" onclick="closemenu()">X</button>
     </div>
     <div class="submenu">
@@ -33,6 +33,31 @@
       <button class="menubutton" onclick="openProfile()">Profile</button>
     </div>
   </div>
+
+  <dialog class="signin_dialog" isopened="false">
+    <div>
+      <input type="text" placeholder="Username..." />
+    </div>
+    <div>
+      <input type="password" placeholder="Password..." />
+    </div>
+
+    <button onclick="signin()">Sign In</button>
+  </dialog>
+
+  <dialog class="signup_dialog" isopened="false">
+    <div>
+      <input type="text" placeholder="Username..." />
+    </div>
+    <div>
+      <input type="password" placeholder="Password..." />
+    </div>
+    <div>
+      <input type="password" placeholder="Confirm Password..." />
+    </div>
+
+    <button onclick="signup()">Sign Up</button>
+  </dialog>
 
   <button class="openmenu" onclick="openmenu()">&gt;</button>
 

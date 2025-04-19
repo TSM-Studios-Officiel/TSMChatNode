@@ -1,6 +1,6 @@
 :root {
-  --primary: black;
-  --secondary: white;
+  --primary: #020017;
+  --secondary: #24222e;
   --ternary: black;
   --text: white;
   --max-menu-width: 20vw;
@@ -11,13 +11,14 @@ html, body {
   padding: 0;
   width: 100vw;
   height: 100vh;
-  color: white;
+  color: var(--primary);
   overflow-x: hidden;
 }
 
 * {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
+  color: #fff2de;
 }
 
 @keyframes closeMenu {
@@ -46,7 +47,7 @@ div.full {
   left: var(--max-menu-width);
   min-height: 90vh;
   padding-bottom: 10vh;
-  background-color: #000000;
+  background-color: var(--ternary);
   font-size: 70%;
 }
 
@@ -77,12 +78,10 @@ input.entry {
   left: 2vw;
   height: 6vh;
 
-  background-color: #222;
+  background-color: var(--primary);
   border-radius: 8px;
 
-  border: 1px solid #555;
-
-  color: white;
+  border: 1px solid var(--secondary);
 }
 
 input.entry:focus {
@@ -98,8 +97,8 @@ div.menu {
   height: 100vh;
   left: 0vw;
 
-  background-color: #222;
-  border-right: 1px solid white;
+  background-color: var(--primary);
+  border-right: 1px solid var(--secondary);
   z-index: 100;
 
   white-space: nowrap;
@@ -115,7 +114,7 @@ div.submenu {
   align-items: center;
   justify-content: center;
 
-  border-top: 2px solid white;
+  border-top: 2px solid var(--secondary);
 }
 
 div.submenu2 {
@@ -133,10 +132,9 @@ button.register {
 
   width: 5vw;
   height: 4vh;
-  border: 2px solid white;
-  background-color: rgb(50, 50, 50);
+  border: 1px solid var(--secondary);
+  background-color: rgb(43, 43, 43);
   border-radius: 3px;
-  color: white;
 
   padding: 1%;
   margin-right: 5vw;
@@ -150,12 +148,12 @@ button.register {
 
 button.register:hover {
   cursor: pointer;
-  background-color: #212121;
+  background-color: rgb(24, 24, 24);
 }
 
 button.register:active {
   cursor: pointer;
-  background-color: #000000;
+  background-color: var(--ternary);
 }
 
 button.menubutton {
@@ -165,10 +163,9 @@ button.menubutton {
 
   width: 15vw;
   height: 4vh;
-  border: 1px solid white;
-  background-color: rgb(50, 50, 50);
+  border: 1px solid var(--secondary);
+  background-color: rgb(43, 43, 43);
   border-radius: 3px;
-  color: white;
 
   padding: 1%;
   margin-top: 2vh;
@@ -180,12 +177,12 @@ button.menubutton {
 
 button.menubutton:hover {
   cursor: pointer;
-  background-color: #212121;
+  background-color: rgb(24, 24, 24);
 }
 
 button.menubutton:active {
   cursor: pointer;
-  background-color: #000000;
+  background-color: var(--ternary);
 }
 
 button.closemenu {
@@ -194,7 +191,6 @@ button.closemenu {
   background: none;
   border: none;
   font-family: Helvetica;
-  color: white;
 }
 
 button.closemenu:hover {
@@ -211,7 +207,6 @@ button.openmenu {
   align-items: center;
   border: none;
   font-family: Helvetica;
-  color: white;
   bottom: 4vh;
   z-index: 50;
  
@@ -233,4 +228,82 @@ div.menuopened {
   animation-duration: 300ms;
   animation-timing-function: ease-in-out;
   animation-fill-mode: forwards;
+}
+
+@keyframes dialogOpen {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogClose {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+dialog[open] {
+  --v-width: 30vw;
+  --v-height: 40vh;
+  
+  position: fixed;
+  display: flex;
+
+  flex-direction: column;
+  text-align: center;
+  align-content: center;
+  justify-content: space-around;
+
+  width: var(--v-width);
+  height: var(--v-height);
+
+  top: calc(var(--v-height) / 2);
+
+  background-color: var(--primary);
+  border: 1px solid var(--secondary);
+  border-radius: 8px;
+
+  animation-name: dialogOpen;
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+/* TODO: Do a closing animation on the dialog boxes */
+dialog {
+  animation-name: dialogClose;
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+dialog > div {
+  border: 1px solid var(--secondary);
+  border-radius: 4px;
+  padding: 2vh 0;
+}
+
+dialog > div > input {
+  background-color: var(--secondary);
+  border: 1px solid var(--ternary);
+  border-radius: 2px;
+  padding: 1%;
+}
+
+dialog > div > input:focus {
+  outline: none;
+}
+
+dialog > button {
+  background-color: var(--secondary);
+  border: none;
+  padding: 1vh;
 }

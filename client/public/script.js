@@ -118,3 +118,48 @@ function seeRegisteredServer() {
   const registrationWindow = window.open("registered.html", "_blank");
   registrationWindow.focus();
 }
+
+function openDialog(index) {
+  const dialogBoxes = document.querySelectorAll("dialog");
+  for (const dialogBox of dialogBoxes) {
+    if (dialogBox.getAttribute("open")) {
+      dialogBox.setAttribute("isopened", true);
+    } else {
+      dialogBox.setAttribute("isopened", false);
+    }
+    dialogBox.removeAttribute("open");
+  }
+
+  switch (index) {
+    case 0: { // signin dialog
+      const signin = document.querySelector(".signin_dialog");
+      const isopenedtext = signin.getAttribute("isopened");
+      let isOpened;
+      if (isopenedtext == "true") isOpened = true;
+      else isOpened = false;
+      signin.removeAttribute("isopened");
+      signin.setAttribute("isopened", !isOpened);
+      if (!isOpened) {
+        signin.setAttribute("open", true);
+      } else {
+        signin.removeAttribute("open");
+      }
+      break;
+    }
+    case 1: { // signup dialog
+      const signup = document.querySelector(".signup_dialog");
+      const isopenedtext = signup.getAttribute("isopened");
+      let isOpened;
+      if (isopenedtext == "true") isOpened = true;
+      else isOpened = false;
+      signup.removeAttribute("isopened");
+      signup.setAttribute("isopened", !isOpened);
+      if (!isOpened) {
+        signup.setAttribute("open", true);
+      } else {
+        signup.removeAttribute("open");
+      }
+      break;
+    }
+  }
+}
