@@ -5,7 +5,7 @@ export const keypair: { priv: string | null, pub: string | null } = {
   pub: null,
 }
 
-export const sharedKey: { shar: Buffer | null, iv: Buffer | null } = {
+export const sharedKey: { shar: string | null, iv: string | null } = {
   shar: null,
   iv: null,
 }
@@ -39,8 +39,8 @@ export function generateKeypair(length: number) {
  * @param {number?} iv The number of bytes of the IV, by default 16.
  */
 export function generateSharedKey(length: number, iv: number = 16) {
-  sharedKey.shar = randomBytes(length);
-  sharedKey.iv = randomBytes(iv);
+  sharedKey.shar = randomBytes(length).toString('hex');
+  sharedKey.iv = randomBytes(iv).toString('hex');
 }
 
 export function rsaEncrypt(key: string, data: string): string {
@@ -70,7 +70,7 @@ export function aesEncrypt(data: string) {
     throw new Error("No initialization vector defined");
   }
 
-  const cipher = createCipheriv("aes-256-ccm", sharedKey.shar, sharedKey.iv);
+  const cipher = createCipheriv("aes-256-ccm", Buffer.from(sharedKey.shar, 'hex'), Buffer.from(sharedKey.iv, 'hex'));
   return cipher.update(data, 'utf-8', 'hex') + cipher.final('hex');
 }
 
