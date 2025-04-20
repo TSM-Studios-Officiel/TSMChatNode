@@ -43,34 +43,22 @@ export function generateSharedKey(length: number, iv: number = 16) {
   sharedKey.iv = randomBytes(iv);
 }
 
-export function rsaEncrypt(key: string, data: string): string[] {
-  const encrypted_data = publicEncrypt(
+export function rsaEncrypt(key: string, data: string): string {
+  return publicEncrypt(
     key,
     Buffer.from(data),
   ).toString('hex');
-
-  const regexChunks = encrypted_data.match(/.{1,16}/g);
-  const chunks: string[] = [];
-  if (!regexChunks) return [];
-
-  regexChunks.map((v) => chunks.push(v));
-  return chunks;
 }
 
-export function rsaDecrypt(data: string[]): string {
+export function rsaDecrypt(data: string): string {
   if (!keypair.priv) {
     throw new Error("No private key defined");
   }
 
-  let res = "";
-  for (const entry of data) {
-    res += privateDecrypt(
-      keypair.priv,
-      entry,
-    ).toString('utf-8');
-  }
-
-  return res;
+  return privateDecrypt(
+    keypair.priv,
+    Buffer.from(data, 'hex'),
+  ).toString('utf-8');
 }
 
 export function aesEncrypt(data: string) {
