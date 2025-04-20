@@ -23,28 +23,28 @@ html, body {
 
 @keyframes closeMenu {
   0% {
-    translate: 0px 0px;
+    translate: var(--max-menu-width) 0px;
   }
 
   100% {
-    translate: calc(-1 * var(--max-menu-width)) 0px;
+    translate: 0px 0px;
   }
 }
 
 @keyframes openMenu {
   0% {
-    translate: calc(-1 * var(--max-menu-width)) 0px;
+    translate: 0px 0px;
   }
 
   100% {
-    translate: 0px 0px;
+    translate: var(--max-menu-width) 0px;
   }
 }
 
 div.full {
   position: absolute;
   width: 100vw;
-  left: var(--max-menu-width);
+  left: 0vw;
   min-height: 90vh;
   padding-bottom: 10vh;
   background-color: var(--ternary);
@@ -72,7 +72,7 @@ div.console {
 }
 
 input.entry {
-  position: relative;
+  position: fixed;
   top: 88vh;
   width: 96vw;
   left: 2vw;
@@ -95,7 +95,7 @@ div.menu {
 
   width: 20vw;
   height: 100vh;
-  left: 0vw;
+  left: -20vw;
 
   background-color: var(--primary);
   border-right: 1px solid var(--secondary);

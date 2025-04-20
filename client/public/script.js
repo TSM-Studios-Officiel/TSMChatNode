@@ -46,9 +46,7 @@ async function parseCommand(str) {
       }
 
       hostname = argv[0];
-
-      await clientapi.connect(hostname);
-      break;
+      connectToServer(hostname);
     }
 
     case "disconnect": {
@@ -60,14 +58,28 @@ async function parseCommand(str) {
       break;
     }
 
-    // TODO: Make a LOGIN and SIGNUP command that POST information to the central server and retrieves and saves a SESSION ID.
+    case "scan": {
+      let lan = false;
+      if (argv.length >= 1) {
+        if (argv[0] == "lan") lan = true;
+      }
+    }
 
     case "?":
     case "help": {
       logConsole(`Available commands:`);
       logConsole(
-        `!connect <hostname>: Connects to a specified UIS on <hostname>`,
+        `!connect &lt;hostname&gt;: Connects to a specified UIS on &lt;hostname&gt;`,
       );
+      logConsole(
+        `  <span class=blue>Example: !connect localhost ; !connect 0.0.0.1 ; !connect some.domain.net</span><br/>`,
+      );
+      logConsole(
+        `!scan [lan]: Scans a network for available UIS servers. Using the [lan] mode switches the scanning method to scanning your local area network.`,
+      );
+      logConsole(`  <span class=blue>Example: !scan lan ; !scan</span><br/>`);
+      logConsole(`!disconnect: Disconnects from the current server.`);
+
       break;
     }
 
@@ -96,8 +108,13 @@ function openmenu() {
   document.querySelector("div.full").classList.remove("full_opened");
 }
 
+// ! This function is called by a menu button
 function connectToServer() {
-  // TODO: Ré-écrire le code qui permet la connection à un serveur.
+  document.querySelector("input.entry").value = "!connect <hostname>";
+}
+
+async function serverConnect(hostname) {
+  await clientapi.connect(hostname);
 }
 
 function createServer() {
@@ -117,6 +134,20 @@ function seeRegisteredServer() {
   // TODO: Faire une page registered.html
   const registrationWindow = window.open("registered.html", "_blank");
   registrationWindow.focus();
+}
+
+async function signup() {
+  const username = document.querySelector("#signup__username").value;
+  const password = document.querySelector("#signup__password").value;
+  const confirmed_password = document.querySelector("#signup__passconf").value;
+
+  if (password !== confirmed_password) {
+    logConsole(`<span class=red>Passwords do not match</span>`);
+    return;
+  }
+  logConsole(`Connecting as ${username}`);
+
+  await clientapi.signup(username, password);
 }
 
 function openDialog(index) {

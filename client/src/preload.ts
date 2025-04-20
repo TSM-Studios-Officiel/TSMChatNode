@@ -24,6 +24,14 @@ contextBridge.exposeInMainWorld('clientapi', {
     ipcRenderer.send('client/send', contents);
   },
 
+  signin: async (username: string, password: string) => {
+
+  },
+
+  signup: async (username: string, password: string) => {
+    const res = await ipcRenderer.invoke('status/signup', [username, password]);
+  },
+
   log: (doc: string) => {
     logConsole(doc);
   },
@@ -52,6 +60,10 @@ window.addEventListener("DOMContentLoaded", () => {
   ipcRenderer.on("server/connected", (_, data) => {
     clearTimeout(connection_timeout);
     logConsole(`<span class=green>Connected to ${data}</span>`);
+  })
+
+  ipcRenderer.on("log", (_, data) => {
+    logConsole(data);
   })
 })
 

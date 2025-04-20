@@ -70,7 +70,7 @@ export function aesEncrypt(data: string) {
     throw new Error("No initialization vector defined");
   }
 
-  const cipher = createCipheriv("aes-256-ccm", Buffer.from(sharedKey.shar, 'hex'), Buffer.from(sharedKey.iv, 'hex'));
+  const cipher = createCipheriv("aes-256-cbc", Buffer.from(sharedKey.shar, 'hex'), Buffer.from(sharedKey.iv, 'hex'));
   return cipher.update(data, 'utf-8', 'hex') + cipher.final('hex');
 }
 
@@ -83,6 +83,6 @@ export function aesDecrypt(data: string) {
     throw new Error("No initialization vector defined");
   }
 
-  const decipher = createDecipheriv("aes-256-ccm", sharedKey.shar, sharedKey.iv);
+  const decipher = createDecipheriv("aes-256-cbc", Buffer.from(sharedKey.shar, 'hex'), Buffer.from(sharedKey.iv, 'hex'));
   return decipher.update(data, 'hex', 'utf-8') + decipher.final('utf8');
 }

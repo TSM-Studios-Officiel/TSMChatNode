@@ -14,7 +14,6 @@
   <div class="full">
     <div class="console" id="console">
       <span class="blue">Use !help for a list of available commands</span>
-      <span class="blue">Use !connect &lt;ip&gt; to connect to an instance</span>
     </div>
     <input type="text" class="entry" placeholder="> _"></input>
   </div>
@@ -36,10 +35,10 @@
 
   <dialog class="signin_dialog" isopened="false">
     <div>
-      <input type="text" placeholder="Username..." />
+      <input type="text" placeholder="Username..." id="signin__username" />
     </div>
     <div>
-      <input type="password" placeholder="Password..." />
+      <input type="password" placeholder="Password..." id="signin__password" />
     </div>
 
     <button onclick="signin()">Sign In</button>
@@ -47,13 +46,13 @@
 
   <dialog class="signup_dialog" isopened="false">
     <div>
-      <input type="text" placeholder="Username..." />
+      <input type="text" placeholder="Username..." id="signup__username" />
     </div>
     <div>
-      <input type="password" placeholder="Password..." />
+      <input type="password" placeholder="Password..." id="signup__password" />
     </div>
     <div>
-      <input type="password" placeholder="Confirm Password..." />
+      <input type="password" placeholder="Confirm Password..." id="signup__passconf" />
     </div>
 
     <button onclick="signup()">Sign Up</button>
