@@ -136,6 +136,15 @@ function seeRegisteredServer() {
   registrationWindow.focus();
 }
 
+async function signin() {
+  const username = document.querySelector("#signin__username").value;
+  const password = document.querySelector("#signin__password").value;
+
+  logConsole(`Connecting as ${username}`);
+
+  await clientapi.signin(username, password);
+}
+
 async function signup() {
   const username = document.querySelector("#signup__username").value;
   const password = document.querySelector("#signup__password").value;

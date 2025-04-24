@@ -307,3 +307,9 @@ dialog > button {
   border: none;
   padding: 1vh;
 }
+
+span.fail_text {
+  color: red;
+  text-decoration: underline;
+  font-size: 75%;
+}

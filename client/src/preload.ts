@@ -25,10 +25,16 @@ contextBridge.exposeInMainWorld('clientapi', {
   },
 
   signin: async (username: string, password: string) => {
-
+    // @ts-ignore
+    const fail_text: Element = document.querySelector(".signin_dialog")?.querySelector(".fail_text");
+    fail_text.textContent = "";
+    const res = await ipcRenderer.invoke('status/signin', [username, password]);
   },
 
   signup: async (username: string, password: string) => {
+    // @ts-ignore
+    const fail_text: Element = document.querySelector(".signup_dialog")?.querySelector(".fail_text");
+    fail_text.textContent = "";
     const res = await ipcRenderer.invoke('status/signup', [username, password]);
   },
 
@@ -64,6 +70,38 @@ window.addEventListener("DOMContentLoaded", () => {
 
   ipcRenderer.on("log", (_, data) => {
     logConsole(data);
+  })
+
+  ipcRenderer.on("err/console", (_, data) => {
+    console.error(data);
+  })
+
+  ipcRenderer.on("client/signup/ok", () => {
+    const signup_dialog = document.querySelector(".signup_dialog");
+    signup_dialog?.setAttribute("isopened", "false");
+    signup_dialog?.removeAttribute("open");
+  })
+
+  ipcRenderer.on("client/signup/fail", (_, data: string) => {
+    const signup_dialog = document.querySelector(".signup_dialog");
+    // ! Typescript is shit when it comes to handling html data
+    // @ts-ignore
+    const fail_text: Element = signup_dialog.querySelector("span.fail_text");
+    fail_text.textContent = data;
+  })
+
+  ipcRenderer.on("client/signin/ok", () => {
+    const signin_dialog = document.querySelector(".signin_dialog");
+    signin_dialog?.setAttribute("isopened", "false");
+    signin_dialog?.removeAttribute("open");
+  })
+
+  ipcRenderer.on("client/signin/fail", (_, data: string) => {
+    const signin_dialog = document.querySelector(".signin_dialog");
+    // ! Typescript is shit when it comes to handling html data
+    // @ts-ignore
+    const fail_text: Element = signin_dialog.querySelector("span.fail_text");
+    fail_text.textContent = data;
   })
 })
 
