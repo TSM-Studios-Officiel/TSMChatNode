@@ -40,6 +40,9 @@ export function createDashboardServer(ROOT: string, PORTS: { [index: string]: nu
 export function authorizeConnection(user: User): { allowed: boolean, reason: string } {
   if (online_users.length >= CONFIG["Max-Concurrent-Users"]) return { allowed: false, reason: "User limit reached" };
 
+  const username = user.username;
+  if (!CONFIG["Whitelist-Users"].includes(username) && CONFIG["Whitelist"]) return { allowed: false, reason: "You are not whitelisted on this server" };
+
   online_users.push(user);
   io.emit('userupdate', JSON.stringify(online_users));
 
@@ -79,7 +82,7 @@ function handleStop(time: number) {
 }
 
 export default {
-  userConnected: authorizeConnection,
+  authorizeConnection,
   userDisconnected,
   broadcastConsole,
   createDashboardServer,

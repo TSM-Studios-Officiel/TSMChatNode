@@ -46,7 +46,8 @@ async function parseCommand(str) {
       }
 
       hostname = argv[0];
-      connectToServer(hostname);
+      serverConnect(hostname);
+      break;
     }
 
     case "disconnect": {

@@ -8,9 +8,9 @@ import { createServer } from 'node:http';
 import { configureLAN } from './networking';
 import dash from './dashboard';
 import central from './central';
-import { User } from './user';
+import { getUsernameFromID, User } from './user';
 import { checkForUpdate } from './update';
-import { generateKeypair, generateSharedKey } from './encryption';
+import { aesEncrypt, generateKeypair, generateSharedKey, sharedKey } from './encryption';
 const OPN_PRM = import('open').then((v) => v);
 
 const PORTS = {
@@ -67,27 +67,46 @@ if (config["Use-LAN"] && !config["Debug-Mode"]) hostname = configureLAN();
 // Connection URL for clients
 const url = `http://${hostname}:${PORTS.User}`;
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   // Display a connection message
   const connection_message = `<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} joined`;
   dash.broadcastConsole(connection_message);
 
+  console.log(socket.handshake.query);
+
+  if (!socket.handshake.query.id) {
+    dash.broadcastConsole(`<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} was kicked out due to no ID present`);
+    socket.disconnect(true);
+    return;
+  }
+
+  if (typeof socket.handshake.query.id !== typeof "") {
+    dash.broadcastConsole(`<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} was kicked out due to unformatted ID`);
+    socket.disconnect(true);
+    return;
+  }
+
+  // ! Typescript is dumb and we know the ID will be a string by that point
+  // @ts-ignore
+  const ID: string = socket.handshake.query.id;
+
   // Store user data
   const user: User = {
-    username: socket.conn.remoteAddress,
+    username: await getUsernameFromID(ID),
+    id: ID,
   }
 
   // Check whether or not the user is allowed to connect to the UIS
-  const { allowed, reason } = dash.userConnected(user);
+  const { allowed, reason } = dash.authorizeConnection(user);
   if (!allowed) {
-    dash.broadcastConsole(`<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} was kicked out due to ${reason}`);
-    socket.disconnect();
+    dash.broadcastConsole(`<span class=violet>${getTime()}</span> User ${user.username} was kicked out due to ${reason}`);
+    socket.disconnect(true);
     return;
   }
 
   // If yes, the UIS returns an ID call that confirms their connection
   // And a MSG call that sends all messages on the server
-  socket.emit("id", socket.conn.remoteAddress);
+  socket.emit("id", JSON.stringify({ shar: sharedKey.shar, iv: sharedKey.iv }));
   socket.emit("msg", JSON.stringify(messages));
 
   // Disconnect listener for when the user disconnects by themselves
@@ -98,18 +117,19 @@ io.on('connection', (socket) => {
   })
 
   // MSG/PLAIN listener for when the user sends a plain text message
-  socket.on('msg/plain', (_data) => {
-    // TODO: Auth check
+  socket.on('msg/plain', async (_data) => {
+    // TODO: Check for when a user sends a message, whether they're actually on the server.
     const data = JSON.parse(_data);
     if (data["Authorization"] == "") return;
 
     // Adding the message to the list of messages
-    let file;
     const author_id = data["Authorization"];
-    messages.push({ Time: Date.now(), Author: author_id, Text: data.Text.replace(/>/g, '\\>').replace(/</g, '\\<') });
+    const txt = data.Text.replace(/>/g, '\\>').replace(/</g, '\\<');
+    const msg = { Time: Date.now(), Author: author_id, Text: aesEncrypt(txt) };
+    messages.push(msg);
     // If we can store the messages to disk
     if (config["Allow-Disk-Save"] == true) {
-      file = join(ROOT, 'store/messages.json');
+      const file = join(ROOT, 'store/messages.json');
       writeFileSync(file, JSON.stringify(messages));
     }
 

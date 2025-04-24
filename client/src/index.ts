@@ -8,7 +8,7 @@ const CENTRAL_SERVER_URL = "http://localhost:48027"
 const ROOT = join(__dirname, "..");
 let mainWindow: BrowserWindow;
 
-let SESSION_ID = "";
+export let SESSION_ID = "";
 
 const createWindow = () => {
   prereqs();

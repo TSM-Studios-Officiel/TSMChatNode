@@ -1,19 +1,23 @@
 import { io, Socket } from "socket.io-client";
-import { affirmConnection, receiveMessages } from ".";
+import { affirmConnection, receiveMessages, SESSION_ID } from ".";
 
 let socket: Socket | undefined;
 
 export const STATUS = {
   host: "",
   id: "",
+  aes: {
+    shar: Buffer.from(""),
+    iv: Buffer.from(""),
+  }
 };
 
 export function connect(hostname: string) {
-  socket = io(`http://${hostname}:48025/`);
+  socket = io(`http://${hostname}:48025/`, { query: { id: SESSION_ID } });
   STATUS.host = hostname;
 
   socket.on("id", (data: string) => {
-    STATUS.id = data;
+    STATUS.aes = JSON.parse(data);
     affirmConnection(STATUS.host);
   });
 
