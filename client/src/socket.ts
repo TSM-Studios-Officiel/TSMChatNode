@@ -1,14 +1,15 @@
 import { io, Socket } from "socket.io-client";
 import { affirmConnection, receiveMessages, SESSION_ID } from ".";
+import { aesDecrypt, sharedKey } from "./encryption";
 
 let socket: Socket | undefined;
 
-export const STATUS = {
+export let STATUS = {
   host: "",
   id: "",
   aes: {
-    shar: Buffer.from(""),
-    iv: Buffer.from(""),
+    shar: "",
+    iv: "",
   }
 };
 
@@ -22,7 +23,9 @@ export function connect(hostname: string) {
   });
 
   socket.on("msg", (data: string) => {
-    receiveMessages(data);
+    const __data = JSON.parse(data);
+    __data.Text = aesDecrypt(__data.Text, STATUS.aes.shar, STATUS.aes.iv);
+    receiveMessages(__data);
   });
 }
 

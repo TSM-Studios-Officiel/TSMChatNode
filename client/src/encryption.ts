@@ -61,28 +61,40 @@ export function rsaDecrypt(data: string): string {
   ).toString('utf-8');
 }
 
-export function aesEncrypt(data: string) {
-  if (!sharedKey.shar) {
+export function aesEncrypt(data: string, key?: string, iv?: string) {
+  let _key = sharedKey.shar ?? "";
+  let _iv = sharedKey.iv ?? "";
+
+  if (!!key) _key = key;
+  if (!!iv) _iv = iv;
+
+  if (!_key) {
     throw new Error("No shared key defined");
   }
 
-  if (!sharedKey.iv) {
+  if (!_iv) {
     throw new Error("No initialization vector defined");
   }
 
-  const cipher = createCipheriv("aes-256-cbc", Buffer.from(sharedKey.shar, 'hex'), Buffer.from(sharedKey.iv, 'hex'));
+  const cipher = createCipheriv("aes-256-cbc", Buffer.from(_key, 'hex'), Buffer.from(_iv, 'hex'));
   return cipher.update(data, 'utf-8', 'hex') + cipher.final('hex');
 }
 
-export function aesDecrypt(data: string) {
-  if (!sharedKey.shar) {
+export function aesDecrypt(data: string, key?: string, iv?: string) {
+  let _key = sharedKey.shar ?? "";
+  let _iv = sharedKey.iv ?? "";
+
+  if (!!key) _key = key;
+  if (!!iv) _iv = iv;
+
+  if (!_key) {
     throw new Error("No shared key defined");
   }
 
-  if (!sharedKey.iv) {
+  if (!_iv) {
     throw new Error("No initialization vector defined");
   }
 
-  const decipher = createDecipheriv("aes-256-cbc", Buffer.from(sharedKey.shar, 'hex'), Buffer.from(sharedKey.iv, 'hex'));
-  return decipher.update(data, 'hex', 'utf-8') + decipher.final('utf8');
+  const decipher = createDecipheriv("aes-256-cbc", Buffer.from(_key, 'hex'), Buffer.from(_iv, 'hex'));
+  return decipher.update(data, 'hex', 'utf-8') + decipher.final('utf-8');
 }

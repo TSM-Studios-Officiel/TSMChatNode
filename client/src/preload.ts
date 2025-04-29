@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
+import { aesDecrypt } from "./encryption";
 
 let connection_timeout: NodeJS.Timeout;
 
@@ -56,7 +57,7 @@ window.addEventListener("DOMContentLoaded", () => {
     for (const item of exploitableData) {
       const time_sent = new Date(item.Time).toLocaleString();
       const author = item.Author;
-      const text = item.Text;
+      const text = aesDecrypt(item.Text);
 
       const str = `<span class=violet>[${time_sent}]</span> [${author}]: ${text}`;
       logConsole(str);

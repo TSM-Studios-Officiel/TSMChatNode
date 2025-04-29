@@ -49,6 +49,14 @@ export function authorizeConnection(user: User): { allowed: boolean, reason: str
   return { allowed: true, reason: "" };
 }
 
+export function getUsernameFromServerID(identifier: string): string {
+  for (const user of online_users) {
+    if (user.id == identifier) return user.username;
+  }
+
+  return "";
+}
+
 export function userDisconnected(user: User) {
   const index = online_users.indexOf(user);
   online_users.splice(index, 1);

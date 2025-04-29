@@ -6,9 +6,9 @@ import { jsonc } from 'jsonc';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { configureLAN } from './networking';
-import dash from './dashboard';
+import dash, { getUsernameFromServerID } from './dashboard';
 import central from './central';
-import { getUsernameFromID, User } from './user';
+import { generateID, getUsernameFromID, User } from './user';
 import { checkForUpdate } from './update';
 import { aesEncrypt, generateKeypair, generateSharedKey, sharedKey } from './encryption';
 const OPN_PRM = import('open').then((v) => v);
@@ -93,7 +93,7 @@ io.on('connection', async (socket) => {
   // Store user data
   const user: User = {
     username: await getUsernameFromID(ID),
-    id: ID,
+    id: generateID(ID),
   }
 
   // Check whether or not the user is allowed to connect to the UIS
@@ -105,8 +105,9 @@ io.on('connection', async (socket) => {
   }
 
   // If yes, the UIS returns an ID call that confirms their connection
+  // Containing the current in-use AES keys and their server-specific identifier
   // And a MSG call that sends all messages on the server
-  socket.emit("id", JSON.stringify({ shar: sharedKey.shar, iv: sharedKey.iv }));
+  socket.emit("id", JSON.stringify({ id: user.id, shar: sharedKey.shar, iv: sharedKey.iv }));
   socket.emit("msg", JSON.stringify(messages));
 
   // Disconnect listener for when the user disconnects by themselves
@@ -124,8 +125,9 @@ io.on('connection', async (socket) => {
 
     // Adding the message to the list of messages
     const author_id = data["Authorization"];
+    const author = getUsernameFromServerID(author_id);
     const txt = data.Text.replace(/>/g, '\\>').replace(/</g, '\\<');
-    const msg = { Time: Date.now(), Author: author_id, Text: aesEncrypt(txt) };
+    const msg = { Time: Date.now(), Author: author, Text: aesEncrypt(txt) };
     messages.push(msg);
     // If we can store the messages to disk
     if (config["Allow-Disk-Save"] == true) {
@@ -133,7 +135,7 @@ io.on('connection', async (socket) => {
       writeFileSync(file, JSON.stringify(messages));
     }
 
-    dash.broadcastConsole(`<span class=violet>${getTime()}</span> [${author_id}]: ${data.Text}`);
+    dash.broadcastConsole(`<span class=violet>${getTime()}</span> [${author}]: ${data.Text}`);
 
     // Send a MSG call to all connected sockets about the new message that was sent
     socket.emit('msg', JSON.stringify([messages[messages.length - 1]]));

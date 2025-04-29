@@ -1,4 +1,5 @@
 import axios from "axios";
+import bcrypt from 'bcryptjs';
 import { CENTRAL_SERVER_URL } from ".";
 import { keypair, rsaDecrypt } from "./encryption";
 
@@ -25,4 +26,12 @@ export async function getUsernameFromID(id: string): Promise<string> {
   } catch (_) {
     return "\0";
   }
+}
+
+export function generateID(username: string): string {
+  const obj = { username, ia: Date.now() };
+  const str = JSON.stringify(obj);
+  const id = bcrypt.hashSync(str, 5);
+
+  return id;
 }

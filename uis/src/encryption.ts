@@ -83,6 +83,6 @@ export function aesDecrypt(data: string) {
     throw new Error("No initialization vector defined");
   }
 
-  const decipher = createDecipheriv("aes-256-ccm", sharedKey.shar, sharedKey.iv);
+  const decipher = createDecipheriv("aes-256-ccm", Buffer.from(sharedKey.shar, 'hex'), Buffer.from(sharedKey.iv, 'hex'));
   return decipher.update(data, 'hex', 'utf-8') + decipher.final('utf8');
 }
