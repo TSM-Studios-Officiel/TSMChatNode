@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
-import { affirmConnection, receiveMessages, SESSION_ID } from ".";
-import { aesDecrypt, sharedKey } from "./encryption";
+import { affirmConnection, clientError, receiveMessages, SESSION_ID } from ".";
+import { aesDecrypt, aesEncrypt } from "./encryption";
 
 let socket: Socket | undefined;
 
@@ -18,14 +18,23 @@ export function connect(hostname: string) {
   STATUS.host = hostname;
 
   socket.on("id", (data: string) => {
-    STATUS.aes = JSON.parse(data);
+    const __data = JSON.parse(data);
+    STATUS.id = __data.id;
+    STATUS.aes = { shar: __data.shar, iv: __data.iv };
     affirmConnection(STATUS.host);
   });
 
-  socket.on("msg", (data: string) => {
-    const __data = JSON.parse(data);
-    __data.Text = aesDecrypt(__data.Text, STATUS.aes.shar, STATUS.aes.iv);
-    receiveMessages(__data);
+  socket.on("msg", (data: any) => {
+    if (typeof data != typeof []) return;
+    if (data.length == 0) return;
+
+    const __data = [];
+    for (let i = 0; i < data.length; i++) {
+      const obj = { Time: data[i].Time, Author: data[i].Author, Text: "" };
+      obj.Text = aesDecrypt(data[i].Text, STATUS.aes.shar, STATUS.aes.iv);
+      __data.push(obj);
+    }
+    receiveMessages(JSON.stringify(__data));
   });
 }
 
@@ -42,7 +51,7 @@ export function send(contents: string) {
   socket.emit('msg/plain',
     JSON.stringify({
       "Authorization": STATUS.id,
-      "Text": contents,
+      "Text": aesEncrypt(contents, STATUS.aes.shar, STATUS.aes.iv),
     })
   );
 };

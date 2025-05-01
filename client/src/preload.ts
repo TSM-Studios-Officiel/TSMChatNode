@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { aesDecrypt } from "./encryption";
 
 let connection_timeout: NodeJS.Timeout;
 
@@ -17,8 +16,9 @@ contextBridge.exposeInMainWorld('clientapi', {
   },
 
   getHostname: async () => {
-    const { host } = await ipcRenderer.invoke('client/status');
-    return host;
+    const STATUS = await ipcRenderer.invoke('client/status');
+    console.log(STATUS);
+    return STATUS.host;
   },
 
   sendMessage: async (contents: string) => {
@@ -57,7 +57,7 @@ window.addEventListener("DOMContentLoaded", () => {
     for (const item of exploitableData) {
       const time_sent = new Date(item.Time).toLocaleString();
       const author = item.Author;
-      const text = aesDecrypt(item.Text);
+      const text = item.Text;
 
       const str = `<span class=violet>[${time_sent}]</span> [${author}]: ${text}`;
       logConsole(str);

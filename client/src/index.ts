@@ -116,7 +116,6 @@ ipcMain.on('client/send', async (event, args) => {
 })
 
 export function receiveMessages(data: string) {
-  console.log(data);
   mainWindow.webContents.send('server/message', data);
 }
 

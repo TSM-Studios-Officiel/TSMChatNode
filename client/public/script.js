@@ -51,8 +51,8 @@ async function parseCommand(str) {
     }
 
     case "disconnect": {
-      await clientapi.disconnect();
       const hostname = await clientapi.getHostname();
+      await clientapi.disconnect();
       logConsole(
         `<span class=green>Disconnected from ${hostname}</span>`,
       );

@@ -10,7 +10,7 @@ import dash, { getUsernameFromServerID } from './dashboard';
 import central from './central';
 import { generateID, getUsernameFromID, User } from './user';
 import { checkForUpdate } from './update';
-import { aesEncrypt, generateKeypair, generateSharedKey, sharedKey } from './encryption';
+import { aesDecrypt, aesEncrypt, generateKeypair, generateSharedKey, sharedKey } from './encryption';
 const OPN_PRM = import('open').then((v) => v);
 
 const PORTS = {
@@ -72,8 +72,6 @@ io.on('connection', async (socket) => {
   const connection_message = `<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} joined`;
   dash.broadcastConsole(connection_message);
 
-  console.log(socket.handshake.query);
-
   if (!socket.handshake.query.id) {
     dash.broadcastConsole(`<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} was kicked out due to no ID present`);
     socket.disconnect(true);
@@ -97,22 +95,25 @@ io.on('connection', async (socket) => {
   }
 
   // Check whether or not the user is allowed to connect to the UIS
+  // If yes, the user is also automatically added to the current list of users.
   const { allowed, reason } = dash.authorizeConnection(user);
   if (!allowed) {
-    dash.broadcastConsole(`<span class=violet>${getTime()}</span> User ${user.username} was kicked out due to ${reason}`);
+    dash.broadcastConsole(`<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} was kicked out due to ${reason}`);
     socket.disconnect(true);
     return;
   }
+
+  dash.broadcastConsole(`<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} saved as ${user.username}`);
 
   // If yes, the UIS returns an ID call that confirms their connection
   // Containing the current in-use AES keys and their server-specific identifier
   // And a MSG call that sends all messages on the server
   socket.emit("id", JSON.stringify({ id: user.id, shar: sharedKey.shar, iv: sharedKey.iv }));
-  socket.emit("msg", JSON.stringify(messages));
+  socket.emit("msg", messages);
 
   // Disconnect listener for when the user disconnects by themselves
   socket.on("disconnect", () => {
-    const message = `<span class=violet>${getTime()}</span> User ${socket.conn.remoteAddress} left`;
+    const message = `<span class=violet>${getTime()}</span> User ${user.username} left`;
     dash.broadcastConsole(message);
     dash.userDisconnected(user);
   })
@@ -129,17 +130,18 @@ io.on('connection', async (socket) => {
     const txt = data.Text.replace(/>/g, '\\>').replace(/</g, '\\<');
     const msg = { Time: Date.now(), Author: author, Text: aesEncrypt(txt) };
     messages.push(msg);
+
     // If we can store the messages to disk
     if (config["Allow-Disk-Save"] == true) {
       const file = join(ROOT, 'store/messages.json');
       writeFileSync(file, JSON.stringify(messages));
     }
 
-    dash.broadcastConsole(`<span class=violet>${getTime()}</span> [${author}]: ${data.Text}`);
+    dash.broadcastConsole(`<span class=violet>${getTime()}</span> [${author}]: ${aesDecrypt(data.Text)}`);
 
     // Send a MSG call to all connected sockets about the new message that was sent
-    socket.emit('msg', JSON.stringify([messages[messages.length - 1]]));
-    socket.broadcast.emit('msg', JSON.stringify([messages[messages.length - 1]]));
+    socket.emit('msg', [messages[messages.length - 1]]);
+    socket.broadcast.emit('msg', [messages[messages.length - 1]]);
   });
 });
 
