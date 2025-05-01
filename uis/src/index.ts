@@ -108,7 +108,7 @@ io.on('connection', async (socket) => {
   // If yes, the UIS returns an ID call that confirms their connection
   // Containing the current in-use AES keys and their server-specific identifier
   // And a MSG call that sends all messages on the server
-  socket.emit("id", JSON.stringify({ id: user.id, shar: sharedKey.shar, iv: sharedKey.iv }));
+  socket.emit("id", JSON.stringify({ id: user.id, shar: sharedKey.shar, iv: sharedKey.iv, txt: config["Message-Character-Limit"], mb: config["Media-Size-Limit"], amed: config["Allow-Media"] }));
   socket.emit("msg", messages);
 
   // Disconnect listener for when the user disconnects by themselves
@@ -128,13 +128,21 @@ io.on('connection', async (socket) => {
     const author_id = data["Authorization"];
     const author = getUsernameFromServerID(author_id);
     const txt = data.Text.replace(/>/g, '\\>').replace(/</g, '\\<');
-    const msg = { Time: Date.now(), Author: author, Text: aesEncrypt(txt) };
+    // Text is encrypted by clients, assume the client hasn't been tempered with (as that only puts that client at risk).
+    const unencrypted_message = { Time: Date.now(), Author: author, Text: aesDecrypt(txt) };
+    const msg = { Time: Date.now(), Author: author, Text: txt };
+
+    // Text length check
+    if (unencrypted_message.Text.length > config["Message-Character-Limit"]) return;
+
     messages.push(msg);
 
     // If we can store the messages to disk
     if (config["Allow-Disk-Save"] == true) {
       const file = join(ROOT, 'store/messages.json');
-      writeFileSync(file, JSON.stringify(messages));
+      const __msgs = JSON.parse(readFileSync(file, 'utf-8'));
+      __msgs.push(unencrypted_message);
+      writeFileSync(file, JSON.stringify(__msgs), 'utf-8');
     }
 
     dash.broadcastConsole(`<span class=violet>${getTime()}</span> [${author}]: ${aesDecrypt(data.Text)}`);

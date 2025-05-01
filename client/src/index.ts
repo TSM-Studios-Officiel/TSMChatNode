@@ -123,6 +123,10 @@ export function affirmConnection(data: string) {
   mainWindow.webContents.send('server/connected', data);
 }
 
+export function clientError(reason: string) {
+  mainWindow.webContents.send('error/client', reason);
+}
+
 app.whenReady().then(() => {
   createWindow();
 });

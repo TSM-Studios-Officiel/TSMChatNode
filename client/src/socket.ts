@@ -10,6 +10,11 @@ export let STATUS = {
   aes: {
     shar: "",
     iv: "",
+  },
+  limits: {
+    txt: 0,
+    mb: 0,
+    media: false,
   }
 };
 
@@ -21,6 +26,7 @@ export function connect(hostname: string) {
     const __data = JSON.parse(data);
     STATUS.id = __data.id;
     STATUS.aes = { shar: __data.shar, iv: __data.iv };
+    STATUS.limits = { txt: __data.txt, mb: __data.mb, media: __data.amed };
     affirmConnection(STATUS.host);
   });
 
@@ -48,6 +54,10 @@ export function disconnect() {
 
 export function send(contents: string) {
   if (!socket) return;
+
+  console.log(contents.length);
+  if (contents.length > STATUS.limits.txt) clientError(`Message is too long! (${contents.length}/${STATUS.limits.txt})`);
+
   socket.emit('msg/plain',
     JSON.stringify({
       "Authorization": STATUS.id,

@@ -41,6 +41,8 @@ export function authorizeConnection(user: User): { allowed: boolean, reason: str
   if (online_users.length >= CONFIG["Max-Concurrent-Users"]) return { allowed: false, reason: "User limit reached" };
 
   const username = user.username;
+  if (username == "") return { allowed: false, reason: "Who are you?" };
+
   if (CONFIG["Whitelist"]) {
     if (!CONFIG["Whitelist-Users"].includes(username)) return { allowed: false, reason: "You are not whitelisted on this server" };
   }

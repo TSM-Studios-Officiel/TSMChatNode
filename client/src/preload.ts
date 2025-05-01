@@ -104,6 +104,10 @@ window.addEventListener("DOMContentLoaded", () => {
     const fail_text: Element = signin_dialog.querySelector("span.fail_text");
     fail_text.textContent = data;
   })
+
+  ipcRenderer.on('error/client', (_, reason: string) => {
+    logConsole(`<span class=red>${reason}</span>`);
+  })
 })
 
 function logConsole(doc: string) {
