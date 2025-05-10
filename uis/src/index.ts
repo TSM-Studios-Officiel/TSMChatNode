@@ -155,13 +155,18 @@ io.on('connection', async (socket) => {
 
 // API endpoint for the Central Server to use when the server is up
 // Serves as an anti-purging system
+// And for clients scanning servers
 app.get('/s', (req, res) => {
   const STATUS = {
+    "Is-UIS": true,
+    "Name": config["Customization"]["Server-Name"],
+    "Description": config["Customization"]["Server-Description"],
+    "Whitelisted": config["Whitelist"],
     "Is-Alive": true,
     "Users-Connected": dash.getUsers().length,
   };
 
-  res.status(200).send(JSON.stringify(STATUS));
+  res.status(200).json(STATUS);
 });
 
 server.listen(PORTS.User, hostname, async () => {

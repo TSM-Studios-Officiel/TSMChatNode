@@ -55,7 +55,6 @@ export function disconnect() {
 export function send(contents: string) {
   if (!socket) return;
 
-  console.log(contents.length);
   if (contents.length > STATUS.limits.txt) clientError(`Message is too long! (${contents.length}/${STATUS.limits.txt})`);
 
   socket.emit('msg/plain',

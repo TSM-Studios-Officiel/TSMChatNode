@@ -39,6 +39,14 @@ contextBridge.exposeInMainWorld('clientapi', {
     const res = await ipcRenderer.invoke('status/signup', [username, password]);
   },
 
+  showListing: async () => {
+    ipcRenderer.send('list/main');
+  },
+
+  scanLAN: async () => {
+    ipcRenderer.send('list/lan');
+  },
+
   log: (doc: string) => {
     logConsole(doc);
   },

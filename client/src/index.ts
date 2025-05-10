@@ -111,6 +111,79 @@ ipcMain.handle('status/signin', async (event, args) => {
 
 });
 
+ipcMain.on('list/main', async () => {
+  let hostnames = [];
+  try {
+    const res = await axios({
+      method: 'get',
+      url: CENTRAL_SERVER_URL + '/servers',
+    });
+
+    hostnames = res.data;
+  } catch (_) {
+    mainWindow.webContents.send('log', `<span class=red>An error occurred while listing servers`);
+    return;
+  }
+
+  console.log(`Found ${hostnames.length} servers`);
+
+  for (const hostname of hostnames) {
+    console.log(`Pinging http://${hostname}:48025/s`);
+    axios({
+      method: 'get',
+      url: `http://${hostname}:48025/s`,
+      timeout: 5000,
+    }).then((res) => {
+      const data = res.data;
+
+      if (data["Is-UIS"]) {
+        console.log(`${hostname} is a valid UIS server`);
+        const srv = {
+          users: data["Users-Connected"],
+          name: data["Name"],
+          description: data["Description"],
+          whitelisted: data["Whitelisted"],
+        }
+
+        const MESSAGE = `<span class=red>${srv.name}</span>: ${srv.description}<br/><span class=green>Whitelisted?: ${srv.whitelisted}</span><br/><span class=blue>Access via <span class=blue style="text-decoration: underline">!connect ${hostname}</span></span><br/>`
+        mainWindow.webContents.send('log', MESSAGE);
+      }
+
+    }).catch(() => { }); // ignore
+  }
+});
+
+// TODO: make this actually a good system for lan scanning
+// TODO: because it currently only looks for the 256 addresses on 192.168.1.x
+ipcMain.on('list/lan', async () => {
+  const networkURL = `192.168.1`;
+
+  for (let i = 0; i < 255; i++) {
+    console.log(`Pinging http://${networkURL}.${i}:48025/s`);
+    axios({
+      method: 'get',
+      url: `http://${networkURL}.${i}:48025/s`,
+      timeout: 5000,
+    }).then((res) => {
+      const data = res.data;
+
+      if (data["Is-UIS"]) {
+        console.log(`${networkURL}.${i} is a valid UIS server`);
+        const srv = {
+          users: data["Users-Connected"],
+          name: data["Name"],
+          description: data["Description"],
+          whitelisted: data["Whitelisted"],
+        }
+
+        const MESSAGE = `<span class=red>${srv.name}</span>: ${srv.description}<br/><span class=green>Whitelisted?: ${srv.whitelisted}</span><br/><span class=blue>Access via <span class=blue style="text-decoration: underline">!connect ${networkURL}.${i}</span></span><br/>`
+        mainWindow.webContents.send('log', MESSAGE);
+      }
+
+    }).catch(() => { }); // ignore
+  }
+});
+
 ipcMain.on('client/send', async (event, args) => {
   return client_socket.send(args);
 })

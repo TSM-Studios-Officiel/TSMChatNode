@@ -60,10 +60,13 @@ async function parseCommand(str) {
     }
 
     case "scan": {
-      let lan = false;
-      if (argv.length >= 1) {
-        if (argv[0] == "lan") lan = true;
-      }
+      await clientapi.scanLAN();
+      break;
+    }
+
+    case "listing": {
+      await clientapi.showListing();
+      break;
     }
 
     case "?":
@@ -76,9 +79,11 @@ async function parseCommand(str) {
         `  <span class=blue>Example: !connect localhost ; !connect 0.0.0.1 ; !connect some.domain.net</span><br/>`,
       );
       logConsole(
-        `!scan [lan]: Scans a network for available UIS servers. Using the [lan] mode switches the scanning method to scanning your local area network.`,
+        `!scan: Scans your local area network for available UIS servers.`,
       );
-      logConsole(`  <span class=blue>Example: !scan lan ; !scan</span><br/>`);
+      logConsole(
+        `!listing: Retrieves all available listed UIS servers from main.`,
+      );
       logConsole(`!disconnect: Disconnects from the current server.`);
 
       break;

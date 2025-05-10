@@ -9,6 +9,7 @@ export async function register(config: Config, hostname: string): Promise<boolea
       description: config["Customization"]["Server-Description"],
       whitelisted: config["Whitelist"],
       allowlist: config["Allow-Listing"],
+      onlan: config["Use-LAN"],
     };
 
     await axios({
