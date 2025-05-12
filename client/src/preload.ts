@@ -50,6 +50,20 @@ contextBridge.exposeInMainWorld('clientapi', {
   log: (doc: string) => {
     logConsole(doc);
   },
+
+  registerServer: async (hostname: string, detail: string) => {
+    const res = await ipcRenderer.invoke('client/save', { hostname, detail });
+
+    logConsole(res);
+  },
+
+  seeRegisteredServers: async () => {
+    const res = await ipcRenderer.invoke('client/see-saved');
+
+    for (const server of res) {
+      logConsole(`  <span class=blue>${server.hostname}</span>: ${server.detail}`);
+    }
+  }
 });
 
 window.addEventListener("DOMContentLoaded", () => {

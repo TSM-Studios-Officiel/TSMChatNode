@@ -40,7 +40,7 @@ async function parseCommand(str) {
       let hostname = "";
       if (argv.length < 1) {
         logConsole(
-          `<span class=red>Command is missing one positional argument`,
+          `<span class=red>Command is missing one positional argument</span>`,
         );
         break;
       }
@@ -69,6 +69,34 @@ async function parseCommand(str) {
       break;
     }
 
+    case "save": {
+      if (argv.length < 1) {
+        logConsole(
+          `<span class=red>Command is missing one positional argument</span>`,
+        );
+        break;
+      }
+
+      // Use user provided hostname or the server we're connected to
+      let hostname = "";
+      if (argv[0] != "0") hostname = argv[0];
+      else hostname = await clientapi.getHostname();
+
+      // If no hostname provided at ALL
+      if (hostname == "") {
+        logConsole(
+          `<span class=red>You did not provide an IP and you are not currently connected to any server</span>`,
+        );
+        break;
+      }
+
+      // Use details or not depending on whether the user supplied some
+      let detail = "";
+      if (argv.length >= 2) detail = argv.splice(1).join(" ");
+      await clientapi.registerServer(hostname, detail);
+      break;
+    }
+
     case "?":
     case "help": {
       logConsole(`Available commands:`);
@@ -83,6 +111,12 @@ async function parseCommand(str) {
       );
       logConsole(
         `!listing: Retrieves all available listed UIS servers from main.`,
+      );
+      logConsole(
+        `!save [hostname|0] [...detail]: Save the server at [hostname] with [...detail]. Uses the current server if no hostname was provided.`,
+      );
+      logConsole(
+        `  <span class=blue>Example: !save 0 A Chat Node; !save some.domain.net Domain chat node`,
       );
       logConsole(`!disconnect: Disconnects from the current server.`);
 
@@ -138,8 +172,9 @@ function openProfile() {
 
 function seeRegisteredServer() {
   // TODO: Faire une page registered.html
-  const registrationWindow = window.open("registered.html", "_blank");
-  registrationWindow.focus();
+  // TODO: Au lieu de cette folie que j'ai créé qui va juste écrire tous les serveurs dans la console
+
+  clientapi.seeRegisteredServers();
 }
 
 async function signin() {

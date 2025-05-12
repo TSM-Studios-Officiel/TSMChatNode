@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import axios from 'axios';
 import client_socket from './socket';
 import { aesDecrypt, generateKeypair, generateSharedKey, keypair, rsaDecrypt, rsaEncrypt, sharedKey } from './encryption';
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 const CENTRAL_SERVER_URL = "http://localhost:48027"
 const ROOT = join(__dirname, "..");
@@ -112,6 +112,19 @@ ipcMain.handle('status/signin', async (event, args) => {
 
 });
 
+ipcMain.handle('client/save', (event, args) => {
+  const data = JSON.parse(readFileSync('./data/user/servers', 'utf-8'));
+
+  data.push(args);
+  writeFileSync('./data/user/servers', JSON.stringify(data), 'utf-8');
+  return "<span class=green>Server correctly saved to local</span>";
+});
+
+ipcMain.handle('client/see-saved', () => {
+  const data = JSON.parse(readFileSync('./data/user/servers', 'utf-8'));
+  return data;
+})
+
 ipcMain.on('list/main', async () => {
   let hostnames = [];
   try {
@@ -217,6 +230,8 @@ function prereqs() {
   if (!existsSync('./data')) mkdirSync('./data');
   if (!existsSync('./data/keys')) mkdirSync('./data/keys');
   if (!existsSync('./data/user')) mkdirSync('./data/user');
+
+  if (!existsSync('./data/user/servers')) writeFileSync('./data/user/servers', '[]', 'utf-8');
 
   // Generate unique session encryption keys
   generateKeypair(2048);
