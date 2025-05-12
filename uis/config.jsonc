@@ -31,8 +31,9 @@
 
   // Controls whether or not the server instance is allowed to make changes on the host's filesystem to store messages and shared media
   // To conserve them between server reboots.
-  // Default: false
-  "Allow-Disk-Save": false,
+  // Disabling this option disables media attachments
+  // Default: true
+  "Allow-Disk-Save": true,
 
   // Controls how many characters each message is allowed to have at most.
   // Default: 1000

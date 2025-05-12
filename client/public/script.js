@@ -97,6 +97,18 @@ async function parseCommand(str) {
       break;
     }
 
+    case "attach": {
+      if (argv.length < 1) {
+        logConsole(
+          `<span class=red>Command is missing one positional argument</span>`,
+        );
+        break;
+      }
+
+      clientapi.sendMedias(argv);
+      break;
+    }
+
     case "?":
     case "help": {
       logConsole(`Available commands:`);

@@ -25,6 +25,10 @@ contextBridge.exposeInMainWorld('clientapi', {
     ipcRenderer.send('client/send', contents);
   },
 
+  sendMedias: async (paths: string[]) => {
+    ipcRenderer.send('client/media', paths);
+  },
+
   signin: async (username: string, password: string) => {
     // @ts-ignore
     const fail_text: Element = document.querySelector(".signin_dialog")?.querySelector(".fail_text");

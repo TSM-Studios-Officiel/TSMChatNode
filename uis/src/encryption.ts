@@ -1,5 +1,6 @@
 import { createCipheriv, createDecipheriv, randomBytes, generateKeyPairSync, publicEncrypt, privateDecrypt } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 
 export const keypair: { priv: string | null, pub: string | null } = {
   priv: null,
@@ -9,6 +10,10 @@ export const keypair: { priv: string | null, pub: string | null } = {
 export const sharedKey: { shar: string | null, iv: string | null } = {
   shar: null,
   iv: null,
+}
+
+const bcrypt_data: { salt: string | null } = {
+  salt: null,
 }
 
 /**
@@ -118,4 +123,15 @@ export function aesDecrypt(data: string, key?: string, iv?: string) {
 
   const decipher = createDecipheriv("aes-256-cbc", Buffer.from(_key, 'hex'), Buffer.from(_iv, 'hex'));
   return decipher.update(data, 'hex', 'utf-8') + decipher.final('utf-8');
+}
+
+export function hash(data: string): string {
+  if (!bcrypt_data.salt) {
+    bcrypt_data.salt = genSaltSync(10);
+  }
+  return hashSync(data, bcrypt_data.salt);
+}
+
+export function compareHash(data: string, hash: string): boolean {
+  return compareSync(data, hash);
 }

@@ -15,7 +15,8 @@ import dash, { getUsernameFromServerID } from './dashboard';
 import central from './central';
 import { generateID, getUsernameFromID, User } from './user';
 import { checkForUpdate } from './update';
-import { aesDecrypt, generateKeypair, generateSharedKey, sharedKey } from './encryption';
+import { aesDecrypt, aesEncrypt, generateKeypair, generateSharedKey, hash, sharedKey } from './encryption';
+import { randomBytes } from 'node:crypto';
 const OPN_PRM = import('open').then((v) => v);
 
 const PORTS = {
@@ -28,7 +29,7 @@ const ROOT = join(__dirname, '../');
 
 const CURRENT_INSTANCE_DATA: InstData = JSON.parse(readFileSync('./data.json', "utf-8"));
 
-const messages: { Time: number, Author: string, Text: string, Attachments?: string }[] = [];
+const messages: { Time: number, Author: string, Text: string, Attachments?: string[] }[] = [];
 
 export const CENTRAL_SERVER_URL = `http://localhost:${PORTS.Central}`;
 
@@ -51,7 +52,7 @@ if (!existsSync('./store')) mkdirSync('./store');
 if (!existsSync('./store/keys')) mkdirSync('./store/keys');
 if (config["Allow-Disk-Save"]) {
   if (!existsSync('./store/messages')) mkdirSync('./store/messages');
-  if (!existsSync('./store/media')) mkdirSync('./store/media');
+  if (config["Allow-Media"] && !existsSync('./store/media')) mkdirSync('./store/media');
 }
 
 // Generate keys for symmetric and asymmetric encryption
@@ -61,8 +62,26 @@ generateKeypair(2048);
 generateSharedKey(32, 16);
 
 const app = express();
+
+app.get('/attachment/:file', (req, res) => {
+  const file = req.params.file;
+  const path = join(ROOT, 'store/media', file);
+
+  const options: { root: string, dotfiles: 'deny' } = {
+    root: join(ROOT, 'store', 'media').replace(/\\/g, '/') + '/',
+    dotfiles: 'deny'
+  };
+
+  console.log("Request for", path);
+
+  res.sendFile(path, options, () => { });
+})
+
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  // Allow up to CHARACTERS + MEDIA FILE SIZE LIMIT + OVERHEAD size on requests (in bytes)
+  maxHttpBufferSize: config["Message-Character-Limit"] + 1024 * 1024 * config["Media-Size-Limit"] + 1024
+});
 
 // Hostname configuration depending on the config
 // Will always use localhost when Debug Mode is enabled
@@ -125,7 +144,8 @@ io.on('connection', async (socket) => {
     dash.userDisconnected(user);
   })
 
-  // MSG/PLAIN listener for when the user sends a plain text message
+  // fuck you, technological debt time
+  // This function works as an entry point for any and all incoming messages, with or without attachments
   socket.on('msg/plain', async (_data) => {
     // TODO: Check for when a user sends a message, whether they're actually on the server.
     const data = JSON.parse(_data);
@@ -134,10 +154,44 @@ io.on('connection', async (socket) => {
     // Adding the message to the list of messages
     const author_id = data["Authorization"];
     const author = getUsernameFromServerID(author_id);
+
+    // Attachments
+    let MEDIA_URIS = [];
+    let ENCRYPTED_MEDIA_URIS = [];
+
+    if (config["Allow-Media"] && "Attachments" in data) {
+      const attachments = data["Attachments"];
+      dash.broadcastConsole(`<span class=violet>${getTime()}</span> ${author} sent ${attachments.length} attachments`);
+      for (const attachment of attachments) {
+        // Get attachment data and type
+        const __data = attachment.data;
+        let __ext = attachment.ext;
+
+        if (!__ext) __ext = "txt";
+
+        // Extract data from that attachment
+        const unencrypted_media = aesDecrypt(__data);
+        // Size check in BYTES
+        if (unencrypted_media.length > config["Media-Size-Limit"] * 1000 * 1000) continue;
+
+        // Generate a MEDIA URI from the user's ID and a randomly generated value
+        const AUTHOR_HASH = hash(author);
+        const VALUE = randomBytes(4).toString('hex');
+        const VALUE_HASH = hash(VALUE);
+
+        const MEDIA_URI = Buffer.from(`${AUTHOR_HASH}.${VALUE_HASH}`, 'utf-8').toString('hex');
+
+        MEDIA_URIS.push(`${MEDIA_URI}.${__ext}`);
+        ENCRYPTED_MEDIA_URIS.push(aesEncrypt(`${MEDIA_URI}.${__ext}`));
+        // Store the data into an unencrypted format in store/media
+        writeFileSync(`./store/media/${MEDIA_URI}.${__ext}`, unencrypted_media, 'hex');
+      }
+    }
+
     const txt = data.Text.replace(/>/g, '\\>').replace(/</g, '\\<');
     // Text is encrypted by clients, assume the client hasn't been tempered with (as that only puts that client at risk).
-    const unencrypted_message = { Time: Date.now(), Author: author, Text: aesDecrypt(txt) };
-    const msg = { Time: Date.now(), Author: author, Text: txt };
+    const unencrypted_message = { Time: Date.now(), Author: author, Text: aesDecrypt(txt), Attachments: ENCRYPTED_MEDIA_URIS };
+    const msg = { Time: Date.now(), Author: author, Text: txt, Attachments: MEDIA_URIS };
 
     // Text length check
     if (unencrypted_message.Text.length > config["Message-Character-Limit"]) return;
@@ -146,9 +200,11 @@ io.on('connection', async (socket) => {
 
     // If we can store the messages to disk
     if (config["Allow-Disk-Save"] == true) {
-      const file = join(ROOT, 'store/messages.json');
+      const file = `./store/messages/${getDate().replace(/[\[\]]/g, '').replace(/[ \\\/:-]/g, '_')}.json`;
+      if (!existsSync(file)) writeFileSync(file, '[]', 'utf-8');
+
       const __msgs = JSON.parse(readFileSync(file, 'utf-8'));
-      __msgs.push(unencrypted_message);
+      __msgs.push(msg); // Encrypted messages saved to disk
       writeFileSync(file, JSON.stringify(__msgs), 'utf-8');
     }
 

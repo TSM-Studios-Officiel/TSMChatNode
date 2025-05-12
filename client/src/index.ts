@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron';
-import { join } from 'node:path';
+import { extname, join } from 'node:path';
 import axios from 'axios';
 import client_socket from './socket';
 import { aesDecrypt, generateKeypair, generateSharedKey, keypair, rsaDecrypt, rsaEncrypt, sharedKey } from './encryption';
@@ -201,6 +201,21 @@ ipcMain.on('list/lan', async () => {
 ipcMain.on('client/send', async (event, args) => {
   return client_socket.send(args);
 })
+
+ipcMain.on('client/media', async (event, args) => {
+  const CONTENTS: { data: string, ext: string }[] = [];
+  for (const path of args) {
+    const obj = { data: "", ext: "" };
+    obj.data = readFileSync(path, 'hex');
+    obj.ext = extname(path).substring(1);
+
+    console.log(`Sending attachment ${path} type ${obj.ext}`);
+
+    CONTENTS.push(obj);
+  }
+
+  client_socket.sendMedias(CONTENTS);
+});
 
 export function receiveMessages(data: string) {
   mainWindow.webContents.send('server/message', data);
