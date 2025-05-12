@@ -313,3 +313,8 @@ span.fail_text {
   text-decoration: underline;
   font-size: 75%;
 }
+
+img.attachment {
+  margin-left: 5vw;
+  width: 10%;
+}

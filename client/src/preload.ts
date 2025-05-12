@@ -71,7 +71,7 @@ contextBridge.exposeInMainWorld('clientapi', {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-  ipcRenderer.on("server/message", (_, _data) => {
+  ipcRenderer.on("server/message", async (_, _data) => {
     const data = JSON.parse(_data);
     let exploitableData: any[];
     if (typeof data != typeof []) {
@@ -80,12 +80,42 @@ window.addEventListener("DOMContentLoaded", () => {
       exploitableData = data;
     }
 
+    const STATUS = await ipcRenderer.invoke('client/status');
+
     for (const item of exploitableData) {
       const time_sent = new Date(item.Time).toLocaleString();
       const author = item.Author;
       const text = item.Text;
+      const attachments = item.Attachments;
 
-      const str = `<span class=violet>[${time_sent}]</span> [${author}]: ${text}`;
+      let attachment_str = "<br/>";
+      for (const attachment of attachments) {
+        const tmp = attachment.split('.');
+        const type = tmp[tmp.length - 1];
+
+        const url = `http://${STATUS.host}:48025/attachment/${attachment}`;
+
+        console.log(`Displaying ${type}: /attachment/${attachment}`);
+
+        switch (type) {
+          // Images
+          case "png":
+          case "jpg":
+          case "jpeg": {
+            attachment_str += `<img class=attachment src="${url}"></img><br/>`;
+            break;
+          }
+
+          default: {
+            attachment_str += `<a href="${url}">Attachment</a><br/>`;
+            break;
+          }
+        }
+      }
+
+      const str = `<span class=violet>[${time_sent}]</span> [${author}]: ${text}${attachment_str}`;
+      // ! When logging to the console, the input bar doesn't stick to the bottom of the screen and instead scrolls with the rest of the text
+      // TODO: FIX IT
       logConsole(str);
     }
   })

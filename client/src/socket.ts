@@ -36,9 +36,13 @@ export function connect(hostname: string) {
 
     const __data = [];
     for (let i = 0; i < data.length; i++) {
-      const obj = { Time: data[i].Time, Author: data[i].Author, Text: "", Attachments: [] };
+      const obj: { Time: number, Author: string, Text: string, Attachments: string[] } = { Time: data[i].Time, Author: data[i].Author, Text: "", Attachments: [] };
       obj.Text = aesDecrypt(data[i].Text, STATUS.aes.shar, STATUS.aes.iv);
-      if ("Attachments" in data[i]) console.log("ATTACHMENTS: " + data[i].Attachments)
+      if ("Attachments" in data[i]) {
+        for (const attachment of data[i].Attachments) {
+          obj.Attachments.push(aesDecrypt(attachment, STATUS.aes.shar, STATUS.aes.iv));
+        }
+      }
       __data.push(obj);
     }
     receiveMessages(JSON.stringify(__data));

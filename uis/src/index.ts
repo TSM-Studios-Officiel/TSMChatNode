@@ -65,19 +65,18 @@ const app = express();
 
 app.get('/attachment/:file', (req, res) => {
   const file = req.params.file;
-  const path = join(ROOT, 'store/media', file);
 
-  const options: { root: string, dotfiles: 'deny' } = {
-    root: join(ROOT, 'store', 'media').replace(/\\/g, '/') + '/',
-    dotfiles: 'deny'
-  };
-
-  console.log("Request for", path);
-
-  res.sendFile(path, options, () => { });
+  res.sendFile(file, { root: join(ROOT, 'store', 'media') }, (err) => {
+    if (err) {
+      console.log(err);
+    };
+  });
 })
 
 const server = createServer(app);
+// ! When sending 8-7 MB payloads, the server does not accept the incoming connection.
+// ! Something to do with the way information is sent to the server seems to be multiplying it?
+// TODO: FIX THAT
 const io = new Server(server, {
   // Allow up to CHARACTERS + MEDIA FILE SIZE LIMIT + OVERHEAD size on requests (in bytes)
   maxHttpBufferSize: config["Message-Character-Limit"] + 1024 * 1024 * config["Media-Size-Limit"] + 1024
@@ -190,8 +189,8 @@ io.on('connection', async (socket) => {
 
     const txt = data.Text.replace(/>/g, '\\>').replace(/</g, '\\<');
     // Text is encrypted by clients, assume the client hasn't been tempered with (as that only puts that client at risk).
-    const unencrypted_message = { Time: Date.now(), Author: author, Text: aesDecrypt(txt), Attachments: ENCRYPTED_MEDIA_URIS };
-    const msg = { Time: Date.now(), Author: author, Text: txt, Attachments: MEDIA_URIS };
+    const unencrypted_message = { Time: Date.now(), Author: author, Text: aesDecrypt(txt), Attachments: MEDIA_URIS };
+    const msg = { Time: Date.now(), Author: author, Text: txt, Attachments: ENCRYPTED_MEDIA_URIS };
 
     // Text length check
     if (unencrypted_message.Text.length > config["Message-Character-Limit"]) return;
