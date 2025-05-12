@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes, generateKeyPairSync, publicEncrypt, privateDecrypt } from 'node:crypto';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 export const keypair: { priv: string | null, pub: string | null } = {
   priv: null,
@@ -15,6 +16,13 @@ export const sharedKey: { shar: string | null, iv: string | null } = {
  * @param length The number of bits of the key
  */
 export function generateKeypair(length: number) {
+  if (existsSync('./store/keys/pub.pem') && existsSync('./store/keys/priv.pem')) {
+    keypair.priv = readFileSync('./store/keys/priv.pem', 'utf-8');
+    keypair.pub = readFileSync('./store/keys/pub.pem', 'utf-8');
+
+    if (keypair.priv.startsWith("-----BEGIN PRIVATE KEY-----") && keypair.pub.startsWith("-----BEGIN PUBLIC KEY-----")) return;
+  }
+
   const { privateKey, publicKey } = generateKeyPairSync('rsa', {
     modulusLength: length,
     publicKeyEncoding: {
@@ -26,6 +34,9 @@ export function generateKeypair(length: number) {
       format: 'pem'
     }
   });
+
+  writeFileSync('./store/keys/pub.pem', publicKey, 'utf-8');
+  writeFileSync('./store/keys/priv.pem', privateKey, 'utf-8');
 
   keypair.priv = privateKey;
   keypair.pub = publicKey;
@@ -39,8 +50,18 @@ export function generateKeypair(length: number) {
  * @param {number?} iv The number of bytes of the IV, by default 16.
  */
 export function generateSharedKey(length: number, iv: number = 16) {
+  if (existsSync('./store/keys/aes') && existsSync('./store/keys/aes-iv')) {
+    sharedKey.shar = readFileSync('./store/keys/aes', 'hex');
+    sharedKey.iv = readFileSync('./store/keys/aes-iv', 'hex');
+
+    if (sharedKey.shar.length !== 0 && sharedKey.iv.length !== 0) return;
+  }
+
   sharedKey.shar = randomBytes(length).toString('hex');
   sharedKey.iv = randomBytes(iv).toString('hex');
+
+  writeFileSync('./store/keys/aes', sharedKey.shar, 'hex');
+  writeFileSync('./store/keys/aes-iv', sharedKey.iv, 'hex');
 }
 
 export function rsaEncrypt(key: string, data: string): string {

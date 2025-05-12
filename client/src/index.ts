@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import axios from 'axios';
 import client_socket from './socket';
 import { aesDecrypt, generateKeypair, generateSharedKey, keypair, rsaDecrypt, rsaEncrypt, sharedKey } from './encryption';
+import { existsSync, mkdirSync } from 'node:fs';
 
 const CENTRAL_SERVER_URL = "http://localhost:48027"
 const ROOT = join(__dirname, "..");
@@ -213,6 +214,10 @@ app.on('window-all-closed', async () => {
  * The Prerequisite functions, ran on startup but before any window is displayed.
  */
 function prereqs() {
+  if (!existsSync('./data')) mkdirSync('./data');
+  if (!existsSync('./data/keys')) mkdirSync('./data/keys');
+  if (!existsSync('./data/user')) mkdirSync('./data/user');
+
   // Generate unique session encryption keys
   generateKeypair(2048);
   generateSharedKey(32, 16);

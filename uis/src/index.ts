@@ -1,4 +1,9 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+// If the file isn't the main file which was run
+if (require.main !== module) {
+  process.exit(0);
+}
+
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import express from 'express';
@@ -10,7 +15,7 @@ import dash, { getUsernameFromServerID } from './dashboard';
 import central from './central';
 import { generateID, getUsernameFromID, User } from './user';
 import { checkForUpdate } from './update';
-import { aesDecrypt, aesEncrypt, generateKeypair, generateSharedKey, sharedKey } from './encryption';
+import { aesDecrypt, generateKeypair, generateSharedKey, sharedKey } from './encryption';
 const OPN_PRM = import('open').then((v) => v);
 
 const PORTS = {
@@ -22,13 +27,6 @@ const PORTS = {
 const ROOT = join(__dirname, '../');
 
 const CURRENT_INSTANCE_DATA: InstData = JSON.parse(readFileSync('./data.json', "utf-8"));
-
-// Generate keys for symmetric and asymmetric encryption
-// Asymmetric encryption will be used by connecting clients requesting data from the server
-// Symmetric encryption will be used by connected clients for message sending and receiving
-// TODO: Actual encrypted messaging and communication
-generateKeypair(2048);
-generateSharedKey(32, 16);
 
 const messages: { Time: number, Author: string, Text: string, Attachments?: string }[] = [];
 
@@ -48,10 +46,19 @@ if (config["Whitelist"]) {
   config["Whitelist-Users"] = readFileSync('whitelist.txt', 'utf-8').split('\n');
 }
 
-// If the file isn't the main file which was run
-if (require.main !== module) {
-  process.exit(0);
+// Sets up folder structure
+if (!existsSync('./store')) mkdirSync('./store');
+if (!existsSync('./store/keys')) mkdirSync('./store/keys');
+if (config["Allow-Disk-Save"]) {
+  if (!existsSync('./store/messages')) mkdirSync('./store/messages');
+  if (!existsSync('./store/media')) mkdirSync('./store/media');
 }
+
+// Generate keys for symmetric and asymmetric encryption
+// Asymmetric encryption will be used by connecting clients requesting data from the server
+// Symmetric encryption will be used by connected clients for message sending and receiving
+generateKeypair(2048);
+generateSharedKey(32, 16);
 
 const app = express();
 const server = createServer(app);
