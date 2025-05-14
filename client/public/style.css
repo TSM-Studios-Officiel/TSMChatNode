@@ -1,7 +1,7 @@
 :root {
   --primary: #020017;
-  --secondary: #24222e;
-  --ternary: black;
+  --secondary: #306037;
+  --ternary: #173200;
   --text: white;
   --max-menu-width: 20vw;
 }
@@ -12,8 +12,17 @@ html, body {
   width: 100vw;
   height: 100vh;
   color: var(--primary);
-  overflow-x: hidden;
+  overflow: hidden;
+  overflow-y: auto;
+  position: fixed;
+  /* z-index: -100; */
+
+  background: var(--ternary);
+  background: linear-gradient(180deg, var(--ternary) 0%, var(--secondary) 100%);
 }
+
+/* div.background {
+} */
 
 * {
   font-family: 'Courier New', Courier, monospace;
@@ -45,10 +54,12 @@ div.full {
   position: absolute;
   width: 100vw;
   left: 0vw;
-  min-height: 90vh;
-  padding-bottom: 10vh;
-  background-color: var(--ternary);
+  /* bottom: 0vh; */
+  /* min-height: 85vh; */
+  padding-top: 10vh;
+  padding-bottom: 20vh;
   font-size: 70%;
+  /* overflow-y: visible; */
 }
 
 div.full_opened {

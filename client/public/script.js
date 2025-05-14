@@ -135,6 +135,13 @@ async function parseCommand(str) {
       break;
     }
 
+    case "spamdbg": {
+      for(let i = 0; i < 50; i++) {
+        logConsole(`<span class=red>${i}</span>`);
+      }
+      break;
+    }
+
     default: {
       logConsole(`<span class=red>Unknown command: ${cmd}</span>`);
       break;
