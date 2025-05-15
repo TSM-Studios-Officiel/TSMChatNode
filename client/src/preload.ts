@@ -64,8 +64,24 @@ contextBridge.exposeInMainWorld('clientapi', {
   seeRegisteredServers: async () => {
     const res = await ipcRenderer.invoke('client/see-saved');
 
+    const registeredServersList = document.querySelector("div#reg_servers");
+
     for (const server of res) {
-      logConsole(`  <span class=blue>${server.hostname}</span>: ${server.detail}`);
+      const element = document.createElement("div");
+      element.classList.add("reg-server");
+
+      const title = document.createElement("span");
+      title.classList.add("reg-title");
+      title.textContent = server.hostname;
+
+      const detail = document.createElement("span");
+      detail.classList.add("reg-det");
+      detail.textContent = server.detail;
+
+      element.appendChild(title);
+      element.appendChild(detail);
+      registeredServersList?.appendChild(element);
+      // logConsole(`  <span class=blue>${server.hostname}</span>: ${server.detail}`);
     }
   }
 });
@@ -114,8 +130,6 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
       const str = `<span class=violet>[${time_sent}]</span> [${author}]: ${text}${attachment_str}`;
-      // ! When logging to the console, the input bar doesn't stick to the bottom of the screen and instead scrolls with the rest of the text
-      // TODO: FIX IT
       logConsole(str);
     }
   })

@@ -136,7 +136,7 @@ async function parseCommand(str) {
     }
 
     case "spamdbg": {
-      for(let i = 0; i < 50; i++) {
+      for (let i = 0; i < 50; i++) {
         logConsole(`<span class=red>${i}</span>`);
       }
       break;
@@ -187,13 +187,6 @@ function openProfile() {
   // TODO: Faire une page profile.html
   const profileWindow = window.open("profile.html", "_blank");
   profileWindow.focus();
-}
-
-function seeRegisteredServer() {
-  // TODO: Faire une page registered.html
-  // TODO: Au lieu de cette folie que j'ai créé qui va juste écrire tous les serveurs dans la console
-
-  clientapi.seeRegisteredServers();
 }
 
 async function signin() {
@@ -263,3 +256,7 @@ function openDialog(index) {
     }
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  clientapi.seeRegisteredServers();
+});

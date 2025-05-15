@@ -20,12 +20,12 @@
     <input type="text" class="entry" placeholder="> _"></input>
   </div>
 
-  
+
   <div class="menu">
-      <!-- <img src="assets/img/tsmstudios.png" width="40px" height="40px" class="register" style="padding-right: 1vw;"> -->
-      <!-- <button class="register" onclick="openDialog(0)">Sign In</button>
+    <!-- <img src="assets/img/tsmstudios.png" width="40px" height="40px" class="register" style="padding-right: 1vw;"> -->
+    <!-- <button class="register" onclick="openDialog(0)">Sign In</button>
       <button class="register" onclick="openDialog(1)">Sign Up</button> -->
-      <button class="closemenu" onclick="closemenu()">X</button>
+    <button class="closemenu" onclick="closemenu()">X</button>
 
     <div class="profile">
       <img src="assets/img/tsmstudios.png" width="100px" height="100px">
@@ -37,15 +37,16 @@
     </div>
     <div class="submenu">
       <button class="menubutton" onclick="createServer()">Create Server</button>
+      <button class="menubutton" onclick="serverBrowser()">Server Browser</button>
       <div class="connect">
         <input type="text" placeholder="x.x.x.x">
-        <button onclick="connectToServer()">Connecter</button>
+        <button onclick="connectToServer()">Connect</button>
       </div>
       <div class="regsrv">
-        <div class="servers"></div>
+        <div class="servers" id="reg_servers"></div>
         <div class="regsrv-add">
           <input type="text" placeholder="x.x.x.x">
-          <button class="addreg">Add Server to list</button>
+          <button class="addreg" onclick="addServerToList()">+</button>
         </div>
       </div>
     </div>
