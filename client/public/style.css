@@ -10,19 +10,14 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   color: var(--primary);
   overflow: hidden;
   overflow-y: auto;
   position: fixed;
-  /* z-index: -100; */
 
-  background: var(--ternary);
-  background: linear-gradient(180deg, var(--ternary) 0%, var(--secondary) 100%);
+  background: var(--primary);
 }
-
-/* div.background {
-} */
 
 * {
   font-family: 'Courier New', Courier, monospace;
@@ -53,13 +48,12 @@ html, body {
 div.full {
   position: absolute;
   width: 100vw;
-  left: 0vw;
-  /* bottom: 0vh; */
-  /* min-height: 85vh; */
-  padding-top: 10vh;
-  padding-bottom: 20vh;
+  min-height: 100vh;
   font-size: 70%;
-  /* overflow-y: visible; */
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 div.full_opened {
@@ -77,17 +71,29 @@ div.full_closed {
 }
 
 div.console {
+  position: relative;
+
   display: flex;
   flex-direction: column;
-  margin-left: 2%;
+
+  width: 94vw;
+  min-height: 88vh;
+  left: 0vw;
+  margin: 2vh 2vw 2vh 2vw; /* top right bottom left */
+  padding: 0 1vw;
+
+  /* border: 1px solid linear-gradient(180deg, var(--ternary) 0%, var(--secondary) 100%); */
+  border: 1px solid var(--secondary);
+  border-radius: 8px;
 }
 
 input.entry {
-  position: fixed;
-  top: 88vh;
+  bottom: 2vh;
   width: 96vw;
-  left: 2vw;
+  align-self: center;
   height: 6vh;
+
+  margin-bottom: 2vh;
 
   background-color: var(--primary);
   border-radius: 8px;
@@ -125,46 +131,38 @@ div.submenu {
   align-items: center;
   justify-content: center;
 
-  border-top: 2px solid var(--secondary);
+  border-top: 1px solid var(--secondary);
 }
 
-div.submenu2 {
+div.profile {
   display: flex;
-  padding: 1%;
-  margin-right: 5vw;
-  margin-right: auto;
-  margin: 1%;
+  flex-direction: row;
+
+  padding: 2vh .5vw 2vh .5vw;
+  border-top: 1px solid var(--secondary);
+  justify-content: space-around;
 }
 
-button.register {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 5vw;
-  height: 4vh;
+div.profile > img {
   border: 1px solid var(--secondary);
-  background-color: rgb(43, 43, 43);
-  border-radius: 3px;
-
-  padding: 1%;
-  margin-right: 5vw;
-  margin-right: auto;
-  margin: 1%;
-
-  white-space: nowrap;
-  overflow: hidden; 
-  text-overflow: ellipsis;
+  border-radius: 100%;
 }
 
-button.register:hover {
-  cursor: pointer;
-  background-color: rgb(24, 24, 24);
+div.profileinfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  font-size: 70%;
 }
 
-button.register:active {
-  cursor: pointer;
-  background-color: var(--ternary);
+div.profileinfo > span {
+  border-bottom: 1px solid var(--ternary);
+  width: 100%;
+}
+
+div.profileinfo > span#username {
+  margin-bottom: 2vh;
 }
 
 button.menubutton {
@@ -175,11 +173,11 @@ button.menubutton {
   width: 15vw;
   height: 4vh;
   border: 1px solid var(--secondary);
-  background-color: rgb(43, 43, 43);
+  background-color: var(--primary);
   border-radius: 3px;
 
   padding: 1%;
-  margin-top: 2vh;
+  margin: 2vh 0;
 
   white-space: nowrap;
   overflow: hidden; 
@@ -225,6 +223,29 @@ button.openmenu {
 
 button.openmenu:hover {
   cursor: pointer;
+}
+
+div.connect {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 2vh;
+  width: 90%;
+}
+
+div.connect > input {
+  background-color: var(--primary);
+  border: 1px solid var(--secondary);
+  border-radius: 4px 0 0 4px;
+  padding: .4vh;
+  width: 100%;
+}
+
+div.connect > button {
+  background-color: var(--primary);
+  border: 1px solid var(--secondary);
+  border-radius: 0 4px 4px 0;
+  font-size: 50%;
 }
 
 div.menuclosed {
@@ -328,4 +349,15 @@ span.fail_text {
 img.attachment {
   margin-left: 5vw;
   width: 10%;
+}
+
+::-webkit-scrollbar {
+  background-color: var(--primary);
+  width: 1vw;
+  border: 1px solid var(--secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--ternary);
+  border: 1px solid var(--secondary);
 }

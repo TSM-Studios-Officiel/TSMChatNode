@@ -55,5 +55,5 @@
   // Controls the current Debug state. If set to true, the server will not be available publicly and some
   // debugging features will be available.
   // Default: false
-  "Debug-Mode": false
+  "Debug-Mode": true
 }
