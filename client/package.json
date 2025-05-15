@@ -15,12 +15,12 @@
     "compile": "npx tsc && electron ."
   },
   "devDependencies": {
-    "@types/node": "^22.14.1",
-    "electron": "^35.1.5",
+    "@types/node": "^22.15.18",
+    "electron": "^36.2.1",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "axios": "^1.8.4",
+    "axios": "^1.9.0",
     "socket.io-client": "^4.8.1"
   }
 }

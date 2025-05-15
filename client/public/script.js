@@ -39,7 +39,7 @@ async function parseCommand(str) {
     case "connect": {
       let hostname = "";
       if (argv.length < 1) {
-        logConsole(
+        clientapi.log(
           `<span class=red>Command is missing one positional argument</span>`,
         );
         break;
@@ -51,11 +51,7 @@ async function parseCommand(str) {
     }
 
     case "disconnect": {
-      const hostname = await clientapi.getHostname();
-      await clientapi.disconnect();
-      logConsole(
-        `<span class=green>Disconnected from ${hostname}</span>`,
-      );
+      disconnectFromServer();
       break;
     }
 
@@ -71,7 +67,7 @@ async function parseCommand(str) {
 
     case "save": {
       if (argv.length < 1) {
-        logConsole(
+        clientapi.log(
           `<span class=red>Command is missing one positional argument</span>`,
         );
         break;
@@ -84,7 +80,7 @@ async function parseCommand(str) {
 
       // If no hostname provided at ALL
       if (hostname == "") {
-        logConsole(
+        clientapi.log(
           `<span class=red>You did not provide an IP and you are not currently connected to any server</span>`,
         );
         break;
@@ -99,7 +95,7 @@ async function parseCommand(str) {
 
     case "attach": {
       if (argv.length < 1) {
-        logConsole(
+        clientapi.log(
           `<span class=red>Command is missing one positional argument</span>`,
         );
         break;
@@ -111,46 +107,42 @@ async function parseCommand(str) {
 
     case "?":
     case "help": {
-      logConsole(`Available commands:`);
-      logConsole(
+      clientapi.log(`Available commands:`);
+      clientapi.log(
         `!connect &lt;hostname&gt;: Connects to a specified UIS on &lt;hostname&gt;`,
       );
-      logConsole(
+      clientapi.log(
         `  <span class=blue>Example: !connect localhost ; !connect 0.0.0.1 ; !connect some.domain.net</span><br/>`,
       );
-      logConsole(
+      clientapi.log(
         `!scan: Scans your local area network for available UIS servers.`,
       );
-      logConsole(
+      clientapi.log(
         `!listing: Retrieves all available listed UIS servers from main.`,
       );
-      logConsole(
+      clientapi.log(
         `!save [hostname|0] [...detail]: Save the server at [hostname] with [...detail]. Uses the current server if no hostname was provided.`,
       );
-      logConsole(
+      clientapi.log(
         `  <span class=blue>Example: !save 0 A Chat Node; !save some.domain.net Domain chat node`,
       );
-      logConsole(`!disconnect: Disconnects from the current server.`);
+      clientapi.log(`!disconnect: Disconnects from the current server.`);
 
       break;
     }
 
     case "spamdbg": {
       for (let i = 0; i < 50; i++) {
-        logConsole(`<span class=red>${i}</span>`);
+        clientapi.log(`<span class=red>${i}</span>`);
       }
       break;
     }
 
     default: {
-      logConsole(`<span class=red>Unknown command: ${cmd}</span>`);
+      clientapi.log(`<span class=red>Unknown command: ${cmd}</span>`);
       break;
     }
   }
-}
-
-function logConsole(doc) {
-  clientapi.log(doc);
 }
 
 function closemenu() {
@@ -169,10 +161,34 @@ function openmenu() {
 
 // ! This function is called by a menu button
 function connectToServer() {
-  document.querySelector("input.entry").value = "!connect <hostname>";
+  const server = document.querySelector("input#srvco").value;
+
+  const connected = document.querySelector("span#connected_server").textContent;
+
+  if (connected != "none") {
+    disconnectFromServer();
+    return;
+  }
+
+  serverConnect(server);
+}
+
+async function disconnectFromServer() {
+  const connect_button = document.querySelector("button#connectbutton") ??
+    document.createElement("button");
+  connect_button.textContent = "Connect";
+
+  const hostname = await clientapi.getHostname();
+  await clientapi.disconnect();
+  clientapi.log(
+    `<span class=green>Disconnected from ${hostname}</span>`,
+  );
 }
 
 async function serverConnect(hostname) {
+  const connect_button = document.querySelector("button#connectbutton") ??
+    document.createElement("button");
+  connect_button.textContent = "Disconnect";
   await clientapi.connect(hostname);
 }
 
@@ -193,7 +209,8 @@ async function signin() {
   const username = document.querySelector("#signin__username").value;
   const password = document.querySelector("#signin__password").value;
 
-  logConsole(`Connecting as ${username}`);
+  clientapi.log(`Connecting as ${username}`);
+  document.querySelector("span#username").textContent = username;
 
   await clientapi.signin(username, password);
 }
@@ -204,10 +221,12 @@ async function signup() {
   const confirmed_password = document.querySelector("#signup__passconf").value;
 
   if (password !== confirmed_password) {
-    logConsole(`<span class=red>Passwords do not match</span>`);
+    clientapi.log(`<span class=red>Passwords do not match</span>`);
     return;
   }
-  logConsole(`Connecting as ${username}`);
+
+  clientapi.log(`Connecting as ${username}`);
+  document.querySelector("span#username").textContent = username;
 
   await clientapi.signup(username, password);
 }
@@ -258,5 +277,7 @@ function openDialog(index) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  openDialog(0);
+
   clientapi.seeRegisteredServers();
 });

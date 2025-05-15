@@ -32,15 +32,15 @@
       <div class="profileinfo">
         <span id="username">Not logged in</span>
         <span>Connected to</span>
-        <span id="server">null</span>
+        <span id="connected_server">none</span>
       </div>
     </div>
     <div class="submenu">
       <button class="menubutton" onclick="createServer()">Create Server</button>
       <button class="menubutton" onclick="serverBrowser()">Server Browser</button>
       <div class="connect">
-        <input type="text" placeholder="x.x.x.x">
-        <button onclick="connectToServer()">Connect</button>
+        <input type="text" placeholder="x.x.x.x" id="srvco">
+        <button id="connectbutton" onclick="connectToServer()">Connect</button>
       </div>
       <div class="regsrv">
         <div class="servers" id="reg_servers"></div>
@@ -61,6 +61,7 @@
     </div>
 
     <button onclick="signin()">Sign In</button>
+    <button onclick="openDialog(0); openDialog(1)" class="red">I don't have an account</button>
 
     <span class="fail_text"></span>
   </dialog>
@@ -77,6 +78,7 @@
     </div>
 
     <button onclick="signup()">Sign Up</button>
+    <button onclick="openDialog(1); openDialog(0)" class="red">I already have an account</button>
 
     <span class="fail_text"></span>
   </dialog>

@@ -4,14 +4,20 @@ let connection_timeout: NodeJS.Timeout;
 
 contextBridge.exposeInMainWorld('clientapi', {
   connect: async (hostname: string) => {
+    const server_span = document.querySelector("span#connected_server") ?? document.createElement("span");
+    server_span.textContent = hostname;
+
     const res = await ipcRenderer.invoke('client/connect', [hostname]);
     connection_timeout = setTimeout(() => {
       logConsole(`<span class=red>Could not connect to ${hostname}</span>`)
       ipcRenderer.invoke('client/disconnect');
+      server_span.textContent = "none";
     }, 5000);
     return res;
   },
   disconnect: async () => {
+    const server_span = document.querySelector("span#connected_server") ?? document.createElement("span");
+    server_span.textContent = "none";
     await ipcRenderer.invoke('client/disconnect');
   },
 
@@ -181,6 +187,14 @@ window.addEventListener("DOMContentLoaded", () => {
 })
 
 function logConsole(doc: string) {
+  // console.log(window.pageYOffset, document.documentElement.scrollTop);
+
+  // const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  // const scrollHeight = document.documentElement.scrollHeight;
+  // const clientHeight = document.documentElement.clientHeight;
+
+  // const isScrolledDown = scrollTop + clientHeight >= scrollHeight;
+
   const lines = doc.split("\n");
   for (let i = 0; i < lines.length; i++) {
     lines[i] = `<span>${lines[i]}</span>`;
@@ -188,4 +202,13 @@ function logConsole(doc: string) {
   doc = lines.join("");
   const cons = document.querySelector("div#console") ?? document.createElement("div#console");
   cons.innerHTML = `${cons.innerHTML}${doc}`;
+
+  // Scroll down to bottom of the page
+  // ! Because Electron is an absolute bitch,
+  // ! Any functionality that vaguely works with scrolling
+  // ! Will NOT work.
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: 'smooth',
+  })
 }

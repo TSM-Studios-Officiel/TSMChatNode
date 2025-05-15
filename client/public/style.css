@@ -380,19 +380,16 @@ dialog > div {
 }
 
 dialog > div > input {
-  background-color: var(--secondary);
-  border: 1px solid var(--ternary);
+  background-color: var(--primary);
+  border: 1px solid var(--secondary);
   border-radius: 2px;
   padding: 1%;
 }
 
-dialog > div > input:focus {
-  outline: none;
-}
-
 dialog > button {
-  background-color: var(--secondary);
-  border: none;
+  background-color: var(--primary);
+  border: 1px solid var(--secondary);
+  border-radius: 2px;
   padding: 1vh;
 }
 
@@ -416,4 +413,8 @@ img.attachment {
 ::-webkit-scrollbar-thumb {
   background-color: var(--ternary);
   border: 1px solid var(--secondary);
+}
+
+input:focus {
+  outline: none;
 }
