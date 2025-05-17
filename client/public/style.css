@@ -212,9 +212,10 @@ button.openmenu {
   justify-content: center;
   margin-right: auto;
   height: 3vh;
-  background: gray;
+  background: var(--primary);
+  border: 1px solid var(--secondary);
+  border-radius: 0 4px 4px 0;
   align-items: center;
-  border: none;
   font-family: Helvetica;
   bottom: 4vh;
   z-index: 50;
@@ -255,6 +256,8 @@ div.regsrv {
   border: 1px solid var(--secondary);
   padding: 1vw;
   width: 13vw;
+
+  overflow-y: visible;
 }
 
 div.regsrv > .servers {
@@ -284,6 +287,10 @@ div.regsrv button.addreg {
   font-size: 50%;
 }
 
+div.regsrv button.addreg:hover {
+  cursor: pointer;
+}
+
 div.servers > div.reg-server {
   padding-top: 1vh;
   margin: 0 1vh;
@@ -302,6 +309,20 @@ div.reg-server > span.reg-title {
 
 div.reg-server > span.reg-det {
   font-size: 70%;
+}
+
+div.reg-server > button.reg-remove {
+  font-size: 50%;
+  color: darkred;
+  text-decoration: underline;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background-color: transparent;
+}
+
+div.reg-server > button.reg-remove:hover {
+  cursor: pointer;
 }
 
 div.menuclosed {

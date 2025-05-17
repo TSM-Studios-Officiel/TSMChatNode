@@ -68,27 +68,7 @@ contextBridge.exposeInMainWorld('clientapi', {
   },
 
   seeRegisteredServers: async () => {
-    const res = await ipcRenderer.invoke('client/see-saved');
-
-    const registeredServersList = document.querySelector("div#reg_servers");
-
-    for (const server of res) {
-      const element = document.createElement("div");
-      element.classList.add("reg-server");
-
-      const title = document.createElement("span");
-      title.classList.add("reg-title");
-      title.textContent = server.hostname;
-
-      const detail = document.createElement("span");
-      detail.classList.add("reg-det");
-      detail.textContent = server.detail;
-
-      element.appendChild(title);
-      element.appendChild(detail);
-      registeredServersList?.appendChild(element);
-      // logConsole(`  <span class=blue>${server.hostname}</span>: ${server.detail}`);
-    }
+    displayRegisteredServers();
   }
 });
 
@@ -211,4 +191,41 @@ function logConsole(doc: string) {
     top: document.body.scrollHeight,
     behavior: 'smooth',
   })
+}
+
+async function displayRegisteredServers() {
+  const res = await ipcRenderer.invoke('client/see-saved');
+
+  const registeredServersList = document.querySelector("div#reg_servers") ?? document.createElement("div");
+  registeredServersList.innerHTML = '';
+
+  for (let i = 0; i < res.length; i++) {
+    const server = res[i];
+
+    const element = document.createElement("div");
+    element.classList.add("reg-server");
+
+    const title = document.createElement("span");
+    title.classList.add("reg-title");
+    title.textContent = server.hostname;
+
+    const detail = document.createElement("span");
+    detail.classList.add("reg-det");
+    detail.textContent = server.detail;
+
+    const remove = document.createElement("button");
+    remove.textContent = "Delete entry";
+    remove.classList.add("reg-remove");
+    remove.addEventListener("click", async () => {
+      await ipcRenderer.invoke('client/remove-saved', i);
+
+      displayRegisteredServers();
+    });
+
+    element.appendChild(title);
+    element.appendChild(detail);
+    element.appendChild(remove);
+    registeredServersList.appendChild(element);
+    // logConsole(`  <span class=blue>${server.hostname}</span>: ${server.detail}`);
+  }
 }

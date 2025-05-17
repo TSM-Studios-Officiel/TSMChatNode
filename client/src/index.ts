@@ -127,6 +127,14 @@ ipcMain.handle('client/see-saved', () => {
   return data;
 })
 
+ipcMain.handle('client/remove-saved', (event, args) => {
+  const data = JSON.parse(readFileSync('./data/user/servers', 'utf-8'));
+
+  data.splice(args, 1);
+  writeFileSync('./data/user/servers', JSON.stringify(data), 'utf-8');
+  return "<span class=green>Server removed from list</span>";
+})
+
 ipcMain.on('list/main', async () => {
   let hostnames = [];
   try {

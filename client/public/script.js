@@ -205,6 +205,23 @@ function openProfile() {
   profileWindow.focus();
 }
 
+async function addServerToList() {
+  const __val = document.querySelector("input#regsrv").value;
+  const data = __val.split("=");
+  document.querySelector("input#regsrv").value = "";
+
+  let hostname = data[0];
+  let detail = data.splice(1).join(" ");
+  hostname = hostname.trim();
+  detail = detail.trim();
+
+  console.log(hostname, "||", detail);
+
+  await clientapi.registerServer(hostname, detail);
+
+  clientapi.seeRegisteredServers();
+}
+
 async function signin() {
   const username = document.querySelector("#signin__username").value;
   const password = document.querySelector("#signin__password").value;
