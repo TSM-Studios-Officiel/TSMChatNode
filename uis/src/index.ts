@@ -225,7 +225,7 @@ app.get('/s', (req, res) => {
     "Description": config["Customization"]["Server-Description"],
     "Whitelisted": config["Whitelist"],
     "Is-Alive": true,
-    "Users-Connected": dash.getUsers().length,
+    "Users-Connected": `${dash.getUsers().length}/${config["Max-Concurrent-Users"]}`,
   };
 
   res.status(200).json(STATUS);

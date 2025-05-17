@@ -1,8 +1,8 @@
-import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { extname, join } from 'node:path';
 import axios from 'axios';
 import client_socket from './socket';
-import { aesDecrypt, generateKeypair, generateSharedKey, keypair, rsaDecrypt, rsaEncrypt, sharedKey } from './encryption';
+import { aesDecrypt, generateKeypair, generateSharedKey, rsaEncrypt, sharedKey } from './encryption';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 const CENTRAL_SERVER_URL = "http://localhost:48027"
@@ -167,10 +167,10 @@ ipcMain.on('list/main', async () => {
           name: data["Name"],
           description: data["Description"],
           whitelisted: data["Whitelisted"],
+          hostname: hostname,
         }
 
-        const MESSAGE = `<span class=red>${srv.name}</span>: ${srv.description}<br/><span class=green>Whitelisted?: ${srv.whitelisted}</span><br/><span class=blue>Access via <span class=blue style="text-decoration: underline">!connect ${hostname}</span></span><br/>`
-        mainWindow.webContents.send('log', MESSAGE);
+        mainWindow.webContents.send('list-complete/all', srv);
       }
 
     }).catch(() => { }); // ignore
@@ -198,10 +198,10 @@ ipcMain.on('list/lan', async () => {
           name: data["Name"],
           description: data["Description"],
           whitelisted: data["Whitelisted"],
+          hostname: `${networkURL}.${i}`,
         }
 
-        const MESSAGE = `<span class=red>${srv.name}</span>: ${srv.description}<br/><span class=green>Whitelisted?: ${srv.whitelisted}</span><br/><span class=blue>Access via <span class=blue style="text-decoration: underline">!connect ${networkURL}.${i}</span></span><br/>`
-        mainWindow.webContents.send('log', MESSAGE);
+        mainWindow.webContents.send('list-complete/lan', srv);
       }
 
     }).catch(() => { }); // ignore
@@ -277,6 +277,8 @@ async function quit() {
     url: CENTRAL_SERVER_URL + '/disconnect',
     data: { id },
   });
+
+  client_socket.disconnect();
 }
 
 process.on("SIGINT", async () => {

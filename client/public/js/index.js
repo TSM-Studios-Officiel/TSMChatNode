@@ -205,6 +205,12 @@ function openProfile() {
   profileWindow.focus();
 }
 
+function serverBrowser() {
+  openDialog(2);
+  clientapi.scanLAN();
+  clientapi.showListing();
+}
+
 async function addServerToList() {
   const __val = document.querySelector("input#regsrv").value;
   const data = __val.split("=");
@@ -287,6 +293,21 @@ function openDialog(index) {
         signup.setAttribute("open", true);
       } else {
         signup.removeAttribute("open");
+      }
+      break;
+    }
+    case 2: { // browser dialog
+      const browser = document.querySelector(".browser_dialog");
+      const isopenedtext = browser.getAttribute("isopened");
+      let isOpened;
+      if (isopenedtext == "true") isOpened = true;
+      else isOpened = false;
+      browser.removeAttribute("isopened");
+      browser.setAttribute("isopened", !isOpened);
+      if (!isOpened) {
+        browser.setAttribute("open", true);
+      } else {
+        browser.removeAttribute("open");
       }
       break;
     }

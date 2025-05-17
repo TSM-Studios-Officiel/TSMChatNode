@@ -164,6 +164,108 @@ window.addEventListener("DOMContentLoaded", () => {
   ipcRenderer.on('error/client', (_, reason: string) => {
     logConsole(`<span class=red>${reason}</span>`);
   })
+
+  ipcRenderer.on('list-complete/all', (_, server: { users: string, name: string, description: string, whitelisted: boolean, hostname: string }) => {
+    console.log(server);
+
+    const servers_div = document.querySelector("div#all") ?? document.createElement("div");
+
+    const element = document.createElement("div");
+    element.classList.add("server__");
+
+    const NAME_DESC = document.createElement("div");
+    NAME_DESC.classList.add("name_desc");
+
+    const title = document.createElement("span");
+    title.classList.add("title");
+    title.textContent = server.name;
+
+    const description = document.createElement("span");
+    description.classList.add("description");
+    description.textContent = server.description;
+
+    NAME_DESC.appendChild(title);
+    NAME_DESC.appendChild(description);
+
+    const INFO = document.createElement("div");
+    INFO.classList.add("info");
+
+    const whitelist = document.createElement("span");
+    whitelist.classList.add("whitelist");
+    if (server.whitelisted) whitelist.textContent = "Restricted access";
+
+    const users = document.createElement("span");
+    users.classList.add("users");
+    users.textContent = server.users;
+
+    INFO.appendChild(whitelist);
+    INFO.appendChild(users);
+
+    const hostname = document.createElement("button");
+    hostname.textContent = server.hostname + ' (Click here to copy)';
+    hostname.addEventListener("click", () => {
+      const input = document.querySelector("input#srvco");
+      // @ts-ignore
+      input.value = server.hostname;
+    });
+
+    element.append(NAME_DESC);
+    element.append(INFO);
+    element.append(hostname);
+
+    servers_div.append(element);
+  });
+
+  ipcRenderer.on('list-complete/lan', (_, server: { users: string, name: string, description: string, whitelisted: boolean, hostname: string }) => {
+    console.log(server);
+
+    const lan_div = document.querySelector("div#lan") ?? document.createElement("div");
+
+    const element = document.createElement("div");
+    element.classList.add("server__");
+
+    const NAME_DESC = document.createElement("div");
+    NAME_DESC.classList.add("name_desc");
+
+    const title = document.createElement("span");
+    title.classList.add("title");
+    title.textContent = server.name;
+
+    const description = document.createElement("span");
+    description.classList.add("description");
+    description.textContent = server.description;
+
+    NAME_DESC.appendChild(title);
+    NAME_DESC.appendChild(description);
+
+    const INFO = document.createElement("div");
+    INFO.classList.add("info");
+
+    const whitelist = document.createElement("span");
+    whitelist.classList.add("whitelist");
+    if (server.whitelisted) whitelist.textContent = "Restricted access";
+
+    const users = document.createElement("span");
+    users.classList.add("users");
+    users.textContent = server.users;
+
+    INFO.appendChild(whitelist);
+    INFO.appendChild(users);
+
+    const hostname = document.createElement("button");
+    hostname.textContent = server.hostname + ' (Click here to copy)';
+    hostname.addEventListener("click", () => {
+      const input = document.querySelector("input#srvco");
+      // @ts-ignore
+      input.value = server.hostname;
+    });
+
+    element.append(NAME_DESC);
+    element.append(INFO);
+    element.append(hostname);
+
+    lan_div.append(element);
+  });
 })
 
 function logConsole(doc: string) {
