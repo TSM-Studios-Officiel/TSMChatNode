@@ -5,7 +5,7 @@ import client_socket from './socket';
 import { aesDecrypt, generateKeypair, generateSharedKey, rsaEncrypt, sharedKey } from './encryption';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
-const CENTRAL_SERVER_URL = "http://localhost:48027"
+const CENTRAL_SERVER_URL = "http://141.94.70.169:48027"
 const ROOT = join(__dirname, "..");
 let mainWindow: BrowserWindow;
 

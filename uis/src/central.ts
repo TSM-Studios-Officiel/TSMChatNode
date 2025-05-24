@@ -8,8 +8,8 @@ export async function register(config: Config, hostname: string): Promise<boolea
       name: config["Customization"]["Server-Name"],
       description: config["Customization"]["Server-Description"],
       whitelisted: config["Whitelist"],
-      allowlist: config["Allow-Listing"],
-      onlan: config["Use-LAN"],
+      allowlist: config["Connection-Scheme"]["Allow-Listing"],
+      onlan: config["Connection-Scheme"]["Use-LAN"],
     };
 
     await axios({

@@ -31,7 +31,7 @@ const CURRENT_INSTANCE_DATA: InstData = JSON.parse(readFileSync('./data.json', "
 
 const messages: { Time: number, Author: string, Text: string, Attachments?: string[] }[] = [];
 
-export const CENTRAL_SERVER_URL = `http://localhost:${PORTS.Central}`;
+export const CENTRAL_SERVER_URL = `http://141.94.70.169:${PORTS.Central}`;
 
 // Read config
 let config: Config;
@@ -85,9 +85,9 @@ const io = new Server(server, {
 // Hostname configuration depending on the config
 // Will always use localhost when Debug Mode is enabled
 // Will try to find a LAN IP when Use-Lan is enabled
-// TODO: Find a non-LAN IP when Use-Lan and Debug-Mode are both disabled
-let hostname: string = 'localhost';
-if (config["Use-LAN"] && !config["Debug-Mode"]) hostname = configureLAN();
+// TODO: Find a non-LAN IP when Use-Lan and Debug-Mode are both disabled and no IP has been specified
+let hostname: string = config["Connection-Scheme"]["IP"] ?? "localhost";
+if (config["Connection-Scheme"]["Use-LAN"] && !config["Debug-Mode"] && config["Connection-Scheme"]["IP"] === "") hostname = configureLAN();
 
 // Connection URL for clients
 const url = `http://${hostname}:${PORTS.User}`;
@@ -265,8 +265,6 @@ export function getDate() {
 }
 
 export interface Config {
-  "Use-LAN": boolean,
-  "Allow-Listing": boolean,
   "Whitelist": boolean,
   "Max-Concurrent-Users": number,
   "Allow-Disk-Save": boolean,
@@ -275,6 +273,12 @@ export interface Config {
   "Media-Size-Limit": number,
   "Ephemeral-Messages": number,
   "Debug-Mode": boolean,
+
+  "Connection-Scheme": {
+    "Use-LAN": boolean,
+    "Allow-Listing": boolean,
+    "IP": string,
+  }
 
   "Customization": {
     "Server-Name": string,

@@ -7,18 +7,26 @@
 
     // A tiny bit of text underneath the server name when displayed on the main page
     "Server-Description": "User Instance Server Template"
-  },  
+  },
 
-  // Controls whether this server instance should only be accessible through LAN networks.
-  // If enabled, this means the IP used for connecting will be your network IP.
-  // This also implies that nobody outside of your network will be able to connect if you enable this option
-  // Default: false
-  "Use-LAN": true,
+  "Connection-Scheme": {
+    // Controls whether this server instance should only be accessible through LAN networks.
+    // If enabled, this means the IP used for connecting will be your network IP.
+    // This also implies that nobody outside of your network will be able to connect if you enable this option
+    // Default: false
+    "Use-LAN": true,
 
-  // Controls listing of this server instance on the global system.
-  // If enabled, this means your server will be referenced and viewable online.
-  // Default: false
-  "Allow-Listing": true,
+    // Controls listing of this server instance on the global system.
+    // If enabled, this means your server will be referenced and viewable online.
+    // Default: false
+    "Allow-Listing": true,
+
+    // A custom IP field useful for knowledgeable users
+    // Allows setting of a custom specific IP that will be used by the UIS to allow connections
+    // Leave blank if you want the code to find that IP for you
+    // Default: ""
+    "IP": ""
+  },
 
   // Controls who is allowed to access the server via a whitelist.txt file.
   // If enabled, only users with usernames present in whitelist.txt will be able to join.
