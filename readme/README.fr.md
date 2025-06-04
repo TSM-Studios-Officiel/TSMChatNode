@@ -24,7 +24,7 @@ Il offre énormément d'options de personnalisation et de configuration, tout au
 
 ---
 
-# 💻 Lancer Localement
+## 💻 Lancer Localement
 
 Pour lancer et modifier le code de TSMChatNode sur votre machine locale, vous pouvez lancer ces quelques commandes:
 
@@ -60,7 +60,17 @@ npm run compile
 npm start
 ```
 
-# ❤️ Contribuer
+## ⌛ Fonctionnalités prévues
+
+Les fonctionalités suivantes sont prévues pour la sortie complète de TSM Chat Node:
+
+- Moyen intuitif d'ajouter des médias aux messages
+- Page de paramètres et de customisation du profile (inclut photos de profil, changements de mots de passe, ...)
+- Messages éphémères
+- Analyse complète des réseaux pour les clients
+- Documents juridiques pour une utilisation acceptable du service
+
+## ❤️ Contribuer
 
 Nous travaillons avec notre communauté. Si vous désirez vous impliquer dans ce projet, voici quelques manières dont vous pouvez agir:  
 
@@ -73,7 +83,7 @@ Si rien n'apparait, [créez une issue](https://github.com/TSM-Studios-Officiel/T
 
 Si vous avez des idées sur comment améliorer TSMChatNode, considérez nous contacter en [créant une issue](https://github.com/TSM-Studios-Officiel/TSMChatNode/issues/new), nous l'entendrons!
 
-# 🖋️ Auteurs
+## 🖋️ Auteurs
 
 TSMChatNode a été créé et construit par les utilisateurs suivants:
 - [@SaphirDeFeu](https://www.github.com/SaphirDeFeu) - Développeur-en-tête
@@ -81,6 +91,6 @@ TSMChatNode a été créé et construit par les utilisateurs suivants:
   
 Avec des aides et un aperçu supplémentaire de la part de l'équipe TSM!
 
-# ⚖️ License
+## ⚖️ License
 
 <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/TSM-Studios-Officiel/TSMChatNode">TSM Chat Node</a> par <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://www.tsmstudios.net">TSM Studios</a> est licensé sous <a href="https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Creative Commons Attribution 4.0 International<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""></a></p>
