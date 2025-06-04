@@ -18,6 +18,7 @@ Il offre énormément d'options de personnalisation et de configuration, tout au
 ## Sommaire
 
 - 💻 [<u>Lancer Localement</u>](#-lancer-localement)
+- ⌛ [<u>Fonctionnalités prévues</u>](#-fonctionnalités-prévues)
 - ❤️ [<u>Contribuer</u>](#️-contribuer)
 - 🖋️ [<u>Auteurs</u>](#️-auteurs)
 - ⚖️ [<u>License</u>](#️-license)
